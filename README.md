@@ -22,6 +22,7 @@
 - [ ] GUI
     - [ ] Switch acceso/spento
     - [ ] Gestione apertura file di log (per controllare un eventuale implosione)
+    	- [ ] Utilizzo TreeView per visualizzazione albero cartelle/file presenti nel server
 
 - [ ] Log messaggi
     - [ ] Suddivisione in cartelle (eg. `root/username/ricevuti/data.txt`)
