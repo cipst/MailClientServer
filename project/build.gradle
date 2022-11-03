@@ -24,8 +24,8 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'com.project.project'
-    mainClass = 'com.project.project.HelloApplication'
+    mainModule = 'com.project.project.server'
+    mainClass = 'com.project.project.server.ServerMain'
 }
 
 javafx {
