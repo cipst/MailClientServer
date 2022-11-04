@@ -5,7 +5,7 @@ plugins {
     id 'org.beryx.jlink' version '2.25.0'
 }
 
-group 'com.project'
+group 'com'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -24,8 +24,8 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'com.project.project.server'
-    mainClass = 'com.project.project.server.ServerMain'
+    mainModule = 'com.project.server'
+    mainClass = 'com.project.server.ServerMain'
 }
 
 javafx {
