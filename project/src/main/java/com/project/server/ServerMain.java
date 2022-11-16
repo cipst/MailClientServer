@@ -19,6 +19,8 @@ public class ServerMain extends Application {
         primaryStage.setOnCloseRequest(event -> System.out.println("CHIUSO"));
     }
 
+
+
     public static void main(String[] args) {
         System.out.println("Init Server...");
         launch(args);

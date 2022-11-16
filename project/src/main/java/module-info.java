@@ -1,4 +1,4 @@
-module com.project.server {
+module com.project {
     requires javafx.controls;
     requires javafx.fxml;
 
@@ -7,6 +7,7 @@ module com.project.server {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
 
-    opens com.project.server to javafx.fxml;
+    opens com.project to javafx.fxml;
+    exports com.project;
     exports com.project.server;
 }
