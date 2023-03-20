@@ -17,23 +17,23 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("MainGUI.fxml"));
-        Scene scene = new Scene(loader.load(), 800, 580);
+        Scene scene = new Scene(loader.load());
 
         EventHandler<ActionEvent> l = event -> {
             try {
                 Application server = ServerMain.class.getDeclaredConstructor().newInstance();
                 Stage s2 = new Stage();
                 server.start(s2);
-                //get server on stop
-                s2.setOnCloseRequest(e -> {
-                    System.out.println("CHIUSO");
-                    ((Button)event.getSource()).setDisable(false);
-                });
+                s2.setOnCloseRequest(e -> ((Button)event.getSource()).setDisable(false));
                 ((Button)event.getSource()).setDisable(true);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         };
+
+        // Get the button from the FXML file and add the event handler
+        Button btn = (Button) scene.lookup("#btnLaunchServer");
+        btn.setOnAction(l);
 
         primaryStage.setScene(scene);
         primaryStage.show();
