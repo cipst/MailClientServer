@@ -9,7 +9,7 @@ public class ServerMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(ServerMain.class.getResource("Server.fxml"));
+        FXMLLoader loader = new FXMLLoader(ServerMain.class.getResource("ServerGUI.fxml"));
 
         Scene scene = new Scene(loader.load(), 800, 580);
         primaryStage.setTitle("Server - La Siummia");
