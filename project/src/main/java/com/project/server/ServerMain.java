@@ -11,12 +11,14 @@ public class ServerMain extends Application {
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(ServerMain.class.getResource("ServerGUI.fxml"));
 
-        Scene scene = new Scene(loader.load(), 800, 580);
+        Scene scene = new Scene(loader.load());
         primaryStage.setTitle("Server - La Siummia");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
-        primaryStage.setOnCloseRequest(event -> System.out.println("CHIUSO"));
+        System.out.println("Server opened");
+
+        primaryStage.setOnCloseRequest(event -> System.out.println("Server closed"));
     }
 
 
