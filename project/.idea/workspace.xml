@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5880fde7-3e97-4fe1-a47a-e4533b88f61b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/ServerMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/project/Main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/project/Main.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/project/server/Server.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/project/server/ServerGUI.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +21,26 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="project" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -47,11 +68,12 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/stefa/Documents/GITHUB/prog-III"
+    "last_opened_file_path": "C:/Users/stefa/Documents/GITHUB/prog-3-project/project"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\stefa\Documents\GITHUB\prog-3-project\project\src\main\resources\com\project\models" />
       <recent name="C:\Users\stefa\Documents\GITHUB\prog-3-project\project\src\main\resources\com\project\" />
       <recent name="C:\Users\stefa\Documents\GITHUB\prog-3-project\project\src\main\resources\com\project\server" />
       <recent name="C:\Users\stefa\Documents\GITHUB\prog-3-project\project\src\main\java\com\project\" />
