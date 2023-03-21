@@ -5,7 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.time.LocalDateTime;
+
 public class ServerMain extends Application {
+
+    Database db = new Database();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -18,7 +22,12 @@ public class ServerMain extends Application {
         primaryStage.show();
         System.out.println("Server opened");
 
-        primaryStage.setOnCloseRequest(event -> System.out.println("Server closed"));
+        primaryStage.setOnCloseRequest(event -> {
+            // INSERT HERE CODE TO CLOSE THE SERVER
+            System.out.println("Server closed");
+
+            LogHandler.stopServer("closed");
+        });
     }
 
     @Override

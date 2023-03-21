@@ -11,5 +11,7 @@ module com.project {
     opens com.project to javafx.fxml;
     exports com.project;
     exports com.project.server;
+    exports com.project.server.controller;
+    exports com.project.server.model;
     exports com.project.client;
 }

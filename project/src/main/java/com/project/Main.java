@@ -19,9 +19,9 @@ public class Main extends Application {
         EventHandler<ActionEvent> launchServer = event -> {
             try {
                 Application server = ServerMain.class.getDeclaredConstructor().newInstance();
-                Stage s2 = new Stage();
-                server.start(s2);
-                s2.setOnCloseRequest(e -> ((Button)event.getSource()).setDisable(false));
+                Stage server_stage = new Stage();
+                server.start(server_stage);
+                server_stage.setOnCloseRequest(e -> ((Button)event.getSource()).setDisable(false));
                 ((Button)event.getSource()).setDisable(true);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -29,17 +29,17 @@ public class Main extends Application {
         };
 
         // Get the button from the FXML file and add the event handler
-        Button btn = (Button) scene.lookup("#btnLaunchServer");
-        btn.setOnAction(launchServer);
+        Button btn_launch_server = (Button) scene.lookup("#btnLaunchServer");
+        btn_launch_server.setOnAction(launchServer);
 
         // Get the button from the FXML file and add the event handler
-        Button btnLaunchClientStefano = (Button) scene.lookup("#btnLaunchClientStefano");
-        btnLaunchClientStefano.setOnAction(launchClientAction("stefano.cipolletta@unito.it", "stefano"));
+        Button btn_launch_client_stefano = (Button) scene.lookup("#btnLaunchClientStefano");
+        btn_launch_client_stefano.setOnAction(launchClientAction("stefano.cipolletta@unito.it", "stefano"));
 
-        Button btnLaunchClientMatteo = (Button) scene.lookup("#btnLaunchClientMatteo");
-        btnLaunchClientMatteo.setOnAction(launchClientAction("matteo.barone@unito.it", "matteo"));
+        Button btn_launch_client_matteo = (Button) scene.lookup("#btnLaunchClientMatteo");
+        btn_launch_client_matteo.setOnAction(launchClientAction("matteo.barone@unito.it", "matteo"));
 
-        primaryStage.setTitle("Main - La Siummia");
+        primaryStage.setTitle("Startup Screen");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -48,9 +48,9 @@ public class Main extends Application {
         return event -> {
             try{
                 Application server = ClientMain.class.getDeclaredConstructor(String.class, String.class).newInstance(clientEmail, clientPsw);
-                Stage s2 = new Stage();
-                server.start(s2);
-                s2.setOnCloseRequest(e -> ((Button)event.getSource()).setDisable(false));
+                Stage client_stage = new Stage();
+                server.start(client_stage);
+                client_stage.setOnCloseRequest(e -> ((Button)event.getSource()).setDisable(false));
                 ((Button)event.getSource()).setDisable(true);
             }catch(Exception e){
                 throw new RuntimeException(e);
