@@ -12,20 +12,13 @@ public class ServerMain extends Application {
         FXMLLoader loader = new FXMLLoader(ServerMain.class.getResource("ServerGUI.fxml"));
 
         Scene scene = new Scene(loader.load());
-        primaryStage.setTitle("Server - La Siummia");
+        primaryStage.setTitle("Server");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
         System.out.println("Server opened");
 
         primaryStage.setOnCloseRequest(event -> System.out.println("Server closed"));
-    }
-
-
-
-    public static void main(String[] args) {
-        System.out.println("Init Server...");
-        launch(args);
     }
 
     @Override
