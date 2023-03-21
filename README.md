@@ -24,14 +24,28 @@
     - [ ] Gestione apertura file di log (per controllare un eventuale implosione)
     	- [ ] Utilizzo TreeView per visualizzazione albero cartelle/file presenti nel server
 
-- [ ] Log messaggi
-    - [ ] Suddivisione in cartelle (eg. `root/username/ricevuti/data.txt`)
-    - [ ] Suddivisione in file (eg. `ID, mittente, destinatario/i, argomento, testo, data`)
+- [ ] Mailbox
+    - [ ] Suddivisione in cartelle (eg. `resources/server/nome_utente/data_mail.txt`)
+    - [ ] Suddivisione in file (eg. `ID, mittente, destinatario/i, oggetto, messaggio, data_ora`)
 
-- [ ] Log azioni sul server
+- [ ] Azioni sul server
+    - [ ] Gestione Log
+      - [x] Creazione file
+        - [x] Nome file: `data_ora_start-data_ora_stop.txt`
+      - [ ] Accensione/spegnimento del server
+      - [ ] Connessione/disconnessione di un client
+      - [ ] Ricezione di un messaggio
+        - [ ] Mittente 
+        - [ ] Status del messaggio ("messaggio OK", "destinatario inesistente")
+      - [ ] Inoltro di un messaggio
+        - [ ] Destinatario
+        - [ ] **ERRORE DEBUG** se il messaggio non viene salvato correttamente all'interno del file giusto (***solleva eccezioni?***)
     - [ ] apertura/chiusura di una connessione tra mail client e server
-    - [ ] invio di messaggi da parte di un client
+      - [ ] comprendere i socket
+      - [ ] creare un thread per ogni connessione
+      - [ ] gestire la chiusura di una connessione
     - [ ] ricezione di messaggi da parte di un client
+    - [ ] inoltro dei messaggi ad un client 
     - [ ] errori nella consegna di messaggi
 
 - [ ] Tests
