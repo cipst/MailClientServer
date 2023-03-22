@@ -44,3 +44,4 @@ bin/
 ### CUSTOM ###
 /src/main/resources/com/project/server/logs/
 /src/main/resources/com/project/server/*.txt
+/src/main/resources/com/project/server/*.dat

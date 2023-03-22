@@ -44,6 +44,8 @@ public class LogHandler {
     }
 
     public static void stopServer(String reason){
+        assert !filePath.equals("");
+
         LocalDateTime now = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS);
         String fileName = now.toString().replace(":", "").replace("-", "");
 
