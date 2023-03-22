@@ -1,7 +1,7 @@
 package com.project;
 
-import com.project.client.ClientMain;
-import com.project.server.ServerMain;
+import com.project.client.ClientGUI;
+import com.project.server.ServerGUI;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,7 +18,7 @@ public class Main extends Application {
 
         EventHandler<ActionEvent> launchServer = event -> {
             try {
-                Application server = ServerMain.class.getDeclaredConstructor().newInstance();
+                Application server = ServerGUI.class.getDeclaredConstructor().newInstance();
                 Stage server_stage = new Stage();
                 server.start(server_stage);
                 server_stage.setOnCloseRequest(e -> ((Button)event.getSource()).setDisable(false));
@@ -47,7 +47,7 @@ public class Main extends Application {
     private EventHandler<ActionEvent> launchClientAction(String clientEmail, String clientPsw) {
         return event -> {
             try{
-                Application server = ClientMain.class.getDeclaredConstructor(String.class, String.class).newInstance(clientEmail, clientPsw);
+                Application server = ClientGUI.class.getDeclaredConstructor(String.class, String.class).newInstance(clientEmail, clientPsw);
                 Stage client_stage = new Stage();
                 server.start(client_stage);
                 client_stage.setOnCloseRequest(e -> ((Button)event.getSource()).setDisable(false));

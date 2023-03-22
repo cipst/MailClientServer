@@ -5,15 +5,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.time.LocalDateTime;
-
-public class ServerMain extends Application {
+public class ServerGUI extends Application {
 
     Database db = new Database();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(ServerMain.class.getResource("ServerGUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(ServerGUI.class.getResource("ServerGUI.fxml"));
 
         Scene scene = new Scene(loader.load());
         primaryStage.setTitle("Server");

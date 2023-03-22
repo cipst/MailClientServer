@@ -7,12 +7,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class ClientMain extends Application {
+public class ClientGUI extends Application {
 
     private final String email;
     private final String password;
 
-    public ClientMain(String email, String password){
+    public ClientGUI(String email, String password){
         System.out.println("Client email: " + email);
         System.out.println("Client password: " + password);
         this.email = email;
@@ -21,7 +21,7 @@ public class ClientMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(ClientMain.class.getResource("ClientGUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(ClientGUI.class.getResource("ClientGUI.fxml"));
 
         Scene scene = new Scene(loader.load());
         primaryStage.setTitle(this.email);
