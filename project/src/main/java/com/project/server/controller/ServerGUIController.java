@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.project.server.LogHandler;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -30,6 +31,8 @@ public class ServerGUIController {
     @FXML
     public TextArea logsTextArea;
 
+    private Thread thread;
+
     public void initialize() {
         File emailFile = new File(LogHandler.getLogsPath()+"/");
         File[] files = emailFile.listFiles();
@@ -38,12 +41,13 @@ public class ServerGUIController {
         for (File file : files)
             logsListView.getItems().add(file.getName());
 
-        logsListView.addEventHandler(MouseEvent.MOUSE_CLICKED, this::readLogs);
+        thread = new Thread(this::readLogs);
+        thread.start();
     }
 
-    private void readLogs(MouseEvent event){
-        try {
-            if (event.getClickCount() == 1) {
+    public void readLogs(){
+        try{
+            while (true) {
                 String selected = logsListView.getSelectionModel().getSelectedItem();
                 if (selected != null) {
                     Scanner in = new Scanner(new FileReader(LogHandler.getLogsPath() + "/" + selected));
@@ -52,11 +56,18 @@ public class ServerGUIController {
                         sb.append(in.nextLine());
                         sb.append(System.lineSeparator());
                     }
-                    logsTextArea.setText(sb.toString());
+                    Platform.runLater(() -> logsTextArea.setText(sb.toString()));
                     in.close();
                 }
+
+                // Sleep for some time before updating again
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (Exception e) {
+        }catch(Exception e){
             throw new RuntimeException(e);
         }
     }
@@ -82,14 +93,10 @@ public class ServerGUIController {
                 System.out.println("fileName: " + fileName);
                 logsListView.getItems().remove(logsListView.getItems().size() - 1);
                 logsListView.getItems().add(fileName);
-
             }
+            logsListView.getSelectionModel().selectLast();
         }catch(Exception e){
             System.out.println("ERROR: " + e);
         }
-    }
-
-    public void updateLogTextArea(String log){
-        logsTextArea.appendText(log + "\n");
     }
 }
