@@ -16,7 +16,6 @@ public class ServerGUI extends Application {
         Scene scene = new Scene(loader.load());
         primaryStage.setTitle("Server");
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
         primaryStage.show();
         System.out.println("Server opened");
 

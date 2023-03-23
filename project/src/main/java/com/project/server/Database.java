@@ -107,6 +107,8 @@ public class Database{
         try{
             File emailFile = new File(emailFilePath);
             File[] files = emailFile.listFiles();
+
+            assert files != null;
             for(File file : files){
                 String date = file.getName().substring(0, file.getName().length()-4);
                 System.out.println("DATE PATH: " + date);

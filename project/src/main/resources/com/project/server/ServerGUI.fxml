@@ -5,19 +5,18 @@
 <?import javafx.scene.text.*?>
 <?import org.controlsfx.control.*?>
 
-<SplitPane fx:controller="com.project.server.controller.ServerGUIController" dividerPositions="0.17449664429530198" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="580.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-        <Text layoutX="186.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" AnchorPane.bottomAnchor="41.32161458333333" AnchorPane.topAnchor="40.05078125" />
+<SplitPane dividerPositions="0.17449664429530198" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="580.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.server.controller.ServerGUIController">
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="69.0" prefWidth="100.0">
+        <Text fx:id="labelStartStopServer" layoutX="185.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Start Server" AnchorPane.bottomAnchor="36.05891927083333" AnchorPane.topAnchor="28.0224609375">
+         <font>
+            <Font size="25.0" />
+         </font></Text>
       <ToggleSwitch fx:id="btnStartStopServer" layoutX="58.0" layoutY="35.0" onMouseClicked="#triggerToggle" prefHeight="25.0" prefWidth="60.0" scaleX="2.0" scaleY="2.0" />
     </AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
         <SplitPane dividerPositions="0.2830717488789238" prefHeight="325.0" prefWidth="597.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                <TreeView prefHeight="323.0" prefWidth="166.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-            </AnchorPane>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="268.0">
-                <TextArea editable="false" prefHeight="323.0" prefWidth="423.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-            </AnchorPane>
+             <ListView fx:id="logsListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="120.0" />
+             <TextArea fx:id="logsTextArea" editable="false" prefHeight="323.0" prefWidth="423.0" />
         </SplitPane>
     </AnchorPane>
 </SplitPane>

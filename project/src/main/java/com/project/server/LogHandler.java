@@ -10,6 +10,10 @@ public class LogHandler {
 
     private static String filePath = "";
 
+    public static String getLogsPath() {
+        return LOGS_PATH;
+    }
+
     private static void createFile(String fileName) {
         try{
             filePath = LOGS_PATH+"/"+fileName+".txt";
@@ -35,15 +39,16 @@ public class LogHandler {
         }
     }
 
-    public static void startServer(){
+    public static String startServer(){
         LocalDateTime now = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS);
         String fileName = now.toString().replace(":", "").replace("-", "");
 
         createFile(fileName);
         write(String.format("---- Server started at %s ----", LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS)));
+        return fileName;
     }
 
-    public static void stopServer(String reason){
+    public static String stopServer(String reason){
         assert !filePath.equals("");
 
         LocalDateTime now = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS);
@@ -60,5 +65,6 @@ public class LogHandler {
             System.out.println("Failed to rename file");
         }
         write(String.format("---- Server %s at %s ----", reason, LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS)));
+        return newFile.getName();
     }
 }
