@@ -3,24 +3,17 @@ package com.project.server;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import com.project.models.Email;
 
-public class Database {
+import com.project.models.Email;
+import com.google.gson.Gson;
+
+public class Database{
 
     private final String DATABASE_PATH = "src/main/resources/com/project/server/database.dat";
-    private final String EMAIL_PATH = "src/main/resources/com/project/server/emails/";
-    private HashMap<String, String> clientsConnected;
+    private final String EMAILS_PATH = "src/main/resources/com/project/server/emails";
 
     public Database(){
-        clientsConnected = new HashMap<>();
         onLoad();
-//        Email email = new Email("stefano.cipolletta@unito.it", new ArrayList<>(){
-//            {
-//                add("alessio.rosa@unito.it");
-//                add("matteo.barone@unito.it");
-//            }
-//        }, "Ciao", "Come stai?");
-//        insertEmail(email);
     }
 
     private void onLoad(){
@@ -41,11 +34,11 @@ public class Database {
             accountsOut.writeObject(accounts);
             accountsOut.close();
         }catch(Exception e){
-            System.out.println("ERROR: " + e);
+            System.out.println("ERROR onLoad: " + e);
         }
     }
 
-    public boolean userExist(String email) {
+    private boolean userExist(String email) {
         boolean exist = false;
         ObjectInputStream accounts = null;
 
@@ -57,24 +50,78 @@ public class Database {
                 exist = true;
 
         }catch(Exception e){
-            System.out.println("ERROR: " + e);
+            System.out.println("ERROR userExist: " + e);
         }finally {
             try{
                 assert accounts != null;
                 accounts.close();
             } catch (IOException e) {
-                System.out.println("ERROR: " + e);
+                System.out.println("ERROR userExist: " + e);
             }
         }
 
         return exist;
     }
 
+    private void writeEmail(Email email, String to){
+        String emailFileName = email.getDate().split(" ")[0];
+        String emailFilePath = EMAILS_PATH +"/"+to+"/"+emailFileName+".txt";
 
-    // TODO: Scrivere il metodo per inserire una mail nel file corrispondente
+        try{
+            Reader reader = new FileReader(emailFilePath);
+            Gson g = new Gson();
+
+            ArrayList<Email> emails = g.fromJson(reader, ArrayList.class);
+            emails.add(email);
+            reader.close();
+
+            FileWriter writer = new FileWriter(emailFilePath);
+            writer.write(g.toJson(emails));
+            writer.close();
+        }catch(Exception e){
+            System.out.println("ERROR write: " + e);
+        }
+    }
+
+    private ArrayList<Email> readEmailsByDate(String to, String date){
+        String emailFilePath = EMAILS_PATH +"/"+to+"/"+date+".txt";
+        ArrayList<Email> emails = null;
+
+        try{
+            Reader reader = new FileReader(emailFilePath);
+            Gson g = new Gson();
+
+            emails = g.fromJson(reader, ArrayList.class);
+            reader.close();
+        }catch(Exception e){
+            System.out.println("ERROR read: " + e);
+        }
+
+        return emails;
+    }
+
+    public HashMap<String, ArrayList<Email>> readAllEmails(String to){
+        String emailFilePath = EMAILS_PATH +"/"+to+"/";
+        HashMap<String, ArrayList<Email>> emails = new HashMap<>();
+
+        try{
+            File emailFile = new File(emailFilePath);
+            File[] files = emailFile.listFiles();
+            for(File file : files){
+                String date = file.getName().substring(0, file.getName().length()-4);
+                System.out.println("DATE PATH: " + date);
+                emails.put(date, readEmailsByDate(to, date));
+            }
+        }catch(Exception e){
+            System.out.println("ERROR read: " + e);
+        }
+
+        return emails;
+    }
+
     public void insertEmail(Email email) {
         boolean allRecipientsExists = true;
-        boolean currentRecipientExists = true;
+        boolean currentRecipientExists;
         ArrayList<String> wrongRecipients = new ArrayList<>();
 
         // check all recipients must be valid
@@ -91,18 +138,24 @@ public class Database {
 
         try{
             for (String recipient: email.getRecipients()) {
-                // TODO: creare cartella dell'utente che riceve all'interno di src/main/resources/com/project/server/emails
-                File accountsFile = new File(EMAIL_PATH+recipient);
+                File accountsFile = new File(EMAILS_PATH +"/"+recipient);
                 accountsFile.mkdirs();
-                accountsFile.createNewFile();
+
+                String emailFileName = email.getDate().split(" ")[0];
+                String emailFilePath = EMAILS_PATH +"/"+recipient+"/"+emailFileName+".txt";
+
+                File emailFile = new File(emailFilePath);
+                if(emailFile.createNewFile()){
+                    FileWriter fileWriter = new FileWriter(emailFilePath);
+                    fileWriter.write("[]");
+                    fileWriter.close();
+                }
+
+                writeEmail(email, recipient);
             }
         }catch(Exception e){
-            System.out.println("ERROR: " + e);
+            System.out.println("ERROR insertEmail: " + e);
+
         }
-
-
-        // TODO: creare file con la data dell'invio
-
-        // TODO: scrivere l'email nel file
     }
 }
