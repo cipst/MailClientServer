@@ -2,18 +2,25 @@ package com.project.server;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
+import com.google.gson.GsonBuilder;
 import com.project.models.Email;
 import com.google.gson.Gson;
 
 public class Database{
 
-    private final String DATABASE_PATH = "src/main/resources/com/project/server/database.dat";
+    private final String DATABASE_PATH = "src/main/resources/com/project/server/database.json";
     private final String EMAILS_PATH = "src/main/resources/com/project/server/emails";
 
     public Database(){
         onLoad();
+        Email e1 = new Email("stefano.cipolletta@unito.it", new ArrayList<String>(){{
+            add("matteo.barone@unito.it");
+        }}, "Ciao", "Come stai?", new Date());
+
+        insertEmail(e1);
     }
 
     private void onLoad(){
@@ -30,9 +37,10 @@ public class Database{
             accounts.put("matteo.barone@unito.it", "matteo.barone");
             accounts.put("alessio.rosa@unito.it", "alessio.rosa");
 
-            ObjectOutputStream accountsOut = new ObjectOutputStream(new FileOutputStream(DATABASE_PATH));
-            accountsOut.writeObject(accounts);
-            accountsOut.close();
+            Gson g = new GsonBuilder().setPrettyPrinting().create();
+            FileWriter writer = new FileWriter(DATABASE_PATH);
+            writer.write(g.toJson(accounts));
+            writer.close();
         }catch(Exception e){
             System.out.println("ERROR onLoad: " + e);
         }
@@ -40,24 +48,19 @@ public class Database{
 
     private boolean userExist(String email) {
         boolean exist = false;
-        ObjectInputStream accounts = null;
 
         try {
-            accounts = new ObjectInputStream(new FileInputStream(DATABASE_PATH));
-            HashMap<String, String> accountsMap = (HashMap<String, String>) accounts.readObject();
+            Reader reader = new FileReader(DATABASE_PATH);
+            Gson g = new Gson();
+
+            HashMap<String, String> accountsMap = g.fromJson(reader, HashMap.class);
+            reader.close();
 
             if(accountsMap.containsKey(email))
                 exist = true;
 
         }catch(Exception e){
             System.out.println("ERROR userExist: " + e);
-        }finally {
-            try{
-                assert accounts != null;
-                accounts.close();
-            } catch (IOException e) {
-                System.out.println("ERROR userExist: " + e);
-            }
         }
 
         return exist;
@@ -65,11 +68,11 @@ public class Database{
 
     private void writeEmail(Email email, String to){
         String emailFileName = email.getDate().split(" ")[0];
-        String emailFilePath = EMAILS_PATH +"/"+to+"/"+emailFileName+".txt";
+        String emailFilePath = EMAILS_PATH +"/"+to+"/"+emailFileName+".json";
 
         try{
             Reader reader = new FileReader(emailFilePath);
-            Gson g = new Gson();
+            Gson g = new GsonBuilder().setPrettyPrinting().create();
 
             ArrayList<Email> emails = g.fromJson(reader, ArrayList.class);
             emails.add(email);
@@ -144,7 +147,7 @@ public class Database{
                 accountsFile.mkdirs();
 
                 String emailFileName = email.getDate().split(" ")[0];
-                String emailFilePath = EMAILS_PATH +"/"+recipient+"/"+emailFileName+".txt";
+                String emailFilePath = EMAILS_PATH +"/"+recipient+"/"+emailFileName+".json";
 
                 File emailFile = new File(emailFilePath);
                 if(emailFile.createNewFile()){
