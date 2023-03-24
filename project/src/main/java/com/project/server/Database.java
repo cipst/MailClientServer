@@ -87,7 +87,7 @@ public class Database{
     }
 
     private ArrayList<Email> readEmailsByDate(String to, String date){
-        String emailFilePath = EMAILS_PATH +"/"+to+"/"+date+".txt";
+        String emailFilePath = EMAILS_PATH +"/"+to+"/"+date+".json";
         ArrayList<Email> emails = null;
 
         try{
@@ -114,7 +114,6 @@ public class Database{
             assert files != null;
             for(File file : files){
                 String date = file.getName().substring(0, file.getName().length()-4);
-                System.out.println("DATE PATH: " + date);
                 emails.put(date, readEmailsByDate(to, date));
             }
         }catch(Exception e){

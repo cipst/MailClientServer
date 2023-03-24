@@ -3,6 +3,7 @@ package com.project.server;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class LogHandler {
 
@@ -32,39 +33,40 @@ public class LogHandler {
     private static void write(String log) {
         try{
             FileWriter writer = new FileWriter(filePath, true);
-            writer.write(log + "\n");
+            writer.write(String.format("%s ---- %s\n", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), log));
             writer.close();
         }catch(Exception e){
             System.out.println("ERROR: " + e);
         }
     }
 
+    private static String getFileName(){
+        return LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).toString().replace(":", "").replace("-", "");
+    }
+
     public static String startServer(){
-        LocalDateTime now = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS);
-        String fileName = now.toString().replace(":", "").replace("-", "");
+        String fileName = getFileName();
 
         createFile(fileName);
-        write(String.format("---- Server started at %s ----", LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS)));
+        write("Server started");
         return fileName;
     }
 
     public static String stopServer(String reason){
         assert !filePath.equals("");
-
-        LocalDateTime now = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS);
-        String fileName = now.toString().replace(":", "").replace("-", "");
-
+        String fileName = getFileName();
         File oldFile = new File(filePath);
-        filePath = String.format("%s-%s.txt", filePath.substring(0, filePath.length()-4), fileName);
 
+        filePath = String.format("%s-%s.txt", filePath.substring(0, filePath.length()-4), fileName);
         File newFile = new File(filePath);
 
         if(oldFile.renameTo(newFile)) {
-            System.out.println("File renamed to " + filePath);
+            System.out.println("File renamed to " + newFile.getName());
         } else {
             System.out.println("Failed to rename file");
         }
-        write(String.format("---- Server %s at %s ----", reason, LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS)));
+
+        write(String.format("Server %s", reason));
         return newFile.getName();
     }
 }
