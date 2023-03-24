@@ -1,27 +1,16 @@
 package com.project.server.controller;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.project.server.LogHandler;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import org.controlsfx.control.ToggleSwitch;
 
 public class ServerGUIController {
-
     @FXML
     public ToggleSwitch btnStartStopServer;
     @FXML
@@ -34,7 +23,7 @@ public class ServerGUIController {
     private Thread thread;
 
     public void initialize() {
-        File emailFile = new File(LogHandler.getLogsPath()+"/");
+        File emailFile = new File(LogController.getLogsPath()+"/");
         File[] files = emailFile.listFiles();
 
         assert files != null;
@@ -50,7 +39,7 @@ public class ServerGUIController {
             while (true) {
                 String selected = logsListView.getSelectionModel().getSelectedItem();
                 if (selected != null) {
-                    Scanner in = new Scanner(new FileReader(LogHandler.getLogsPath() + "/" + selected));
+                    Scanner in = new Scanner(new FileReader(LogController.getLogsPath() + "/" + selected));
                     StringBuilder sb = new StringBuilder();
                     while (in.hasNextLine()) {
                         sb.append(in.nextLine());
@@ -84,15 +73,17 @@ public class ServerGUIController {
     public void triggerToggle() {
         try{
             if(btnStartStopServer.isSelected()){
+                ConnectionController.setIsServerOn(true);
                 labelStartStopServer.setText("Stop Server");
-                String fileName = LogHandler.startServer();
+                String fileName = LogController.startServer();
                 logsListView.getItems().add(fileName+".txt");
             }else{
                 labelStartStopServer.setText("Start Server");
-                String fileName = LogHandler.stopServer("stopped");
+                String fileName = LogController.stopServer("stopped");
                 System.out.println("fileName: " + fileName);
                 logsListView.getItems().remove(logsListView.getItems().size() - 1);
                 logsListView.getItems().add(fileName);
+                ConnectionController.setIsServerOn(false);
             }
             logsListView.getSelectionModel().selectLast();
         }catch(Exception e){

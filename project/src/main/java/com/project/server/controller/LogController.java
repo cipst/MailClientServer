@@ -1,11 +1,11 @@
-package com.project.server;
+package com.project.server.controller;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-public class LogHandler {
+public class LogController {
 
     private static final String LOGS_PATH = "src/main/resources/com/project/server/logs";
 

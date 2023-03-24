@@ -46,7 +46,7 @@ public class Database{
         }
     }
 
-    private boolean userExist(String email) {
+    public boolean userExist(String email) {
         boolean exist = false;
 
         try {

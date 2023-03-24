@@ -1,17 +1,18 @@
 package com.project.server;
 
+import com.project.server.controller.LogController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class ServerGUI extends Application {
+public class ServerView extends Application {
 
     Database db = new Database();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(ServerGUI.class.getResource("ServerGUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(ServerView.class.getResource("ServerGUI.fxml"));
 
         Scene scene = new Scene(loader.load());
         primaryStage.setTitle("Server");
@@ -23,7 +24,7 @@ public class ServerGUI extends Application {
             // INSERT HERE CODE TO CLOSE THE SERVER
             System.out.println("Server closed");
 
-            LogHandler.stopServer("closed");
+            LogController.stopServer("closed");
         });
     }
 
