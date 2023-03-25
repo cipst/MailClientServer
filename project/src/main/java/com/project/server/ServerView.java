@@ -1,5 +1,6 @@
 package com.project.server;
 
+import com.project.server.controller.ConnectionController;
 import com.project.server.controller.LogController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +25,8 @@ public class ServerView extends Application {
             // INSERT HERE CODE TO CLOSE THE SERVER
             System.out.println("Server closed");
 
-            LogController.stopServer("closed");
+            if(ConnectionController.isServerOn())
+                LogController.stopServer("closed");
         });
     }
 

@@ -21,8 +21,11 @@ public class Main extends Application {
                 Application server = ServerView.class.getDeclaredConstructor().newInstance();
                 Stage server_stage = new Stage();
                 server.start(server_stage);
-                server_stage.setOnCloseRequest(e -> ((Button)event.getSource()).setDisable(false));
-                ((Button)event.getSource()).setDisable(true);
+//                server_stage.setOnCloseRequest(e -> {
+//                    ((Button) event.getSource()).setDisable(false);
+//                    System.out.println("Server closed");
+//                });
+//                ((Button)event.getSource()).setDisable(true);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
