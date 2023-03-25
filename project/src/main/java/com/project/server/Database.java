@@ -66,6 +66,26 @@ public class Database{
         return exist;
     }
 
+    public boolean checkCredentials(String email, String password){
+        boolean areValid = false;
+
+        try {
+            Reader reader = new FileReader(DATABASE_PATH);
+            Gson g = new Gson();
+
+            HashMap<String, String> accountsMap = g.fromJson(reader, HashMap.class);
+            reader.close();
+
+            if(accountsMap.containsKey(email) && accountsMap.get(email).equals(password))
+                areValid = true;
+
+        }catch(Exception e){
+            System.out.println("ERROR login: " + e);
+        }
+
+        return areValid;
+    }
+
     private void writeEmail(Email email, String to){
         String emailFileName = email.getDate().split(" ")[0];
         String emailFilePath = EMAILS_PATH +"/"+to+"/"+emailFileName+".json";

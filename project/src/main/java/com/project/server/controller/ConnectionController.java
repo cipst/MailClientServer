@@ -2,16 +2,18 @@ package com.project.server.controller;
 
 import com.project.models.Email;
 import com.project.server.Database;
+import com.project.server.model.ClientModel;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class ConnectionController {
     private final int LISTENING_PORT = 1234;
     private final Database db;
-
+    private HashMap<String, ClientModel> connectedClients;
     private static boolean isServerOn = false;
 
     public ConnectionController(Database db) {
@@ -47,47 +49,48 @@ public class ConnectionController {
             this.clientSocket = clientSocket;
         }
 
-            @Override
-            public void run() {
-                try {
-                    ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-                    ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+        @Override
+        public void run() {
+            try {
+                ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
+                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 
-                    String clientAddress = clientSocket.getInetAddress().getHostAddress();
-                    int clientPort = clientSocket.getPort();
+                String clientAddress = clientSocket.getInetAddress().getHostAddress();
+                int clientPort = clientSocket.getPort();
 
-
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                Object obj = in.readObject();
+                if (obj instanceof ConnectionRequest request) {
+                    handleNewConnection(request);
+                } else if (obj instanceof Email email) {
+                    //TODO: handle email HERE
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+        }
 
-            private void read(ObjectInputStream in) {
-                try {
-                    Object obj = in.readObject();
-                    if (obj instanceof ConnectionRequest request) {
-                        String email = request.getEmail();
-                        String password = request.getPassword();
-                        int port = request.getPort();
+        private void handleNewConnection(ConnectionRequest request) {
+            try {
+                String email = request.getEmail();
+                String password = request.getPassword();
+                int port = request.getPort();
 
-                        if(!db.userExist(email)){
-                            throw new Exception("User not found");
-                        }
+                if(!db.userExist(email)){
+                    throw new Exception("User not found");
+                }
 
-//                        TODO: check password THEN add client
-//                        if(!db.checkPassword(email, password)){
-//                            throw new Exception("Wrong password");
-//                        }
+                //TODO: check password THEN add client
+
+                if(!db.checkCredentials(email, password)){
+                    throw new Exception("Wrong password");
+                }
 //
 //                        db.addClient(email, clientSocket);
-                    }
-                    if (obj instanceof Email email) {
 
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+        }
 
         public Socket clientSocket() {
             return clientSocket;
@@ -97,7 +100,7 @@ public class ConnectionController {
         public boolean equals(Object obj) {
             if (obj == this) return true;
             if (obj == null || obj.getClass() != this.getClass()) return false;
-            var that = (ClientHandler) obj;
+            ClientHandler that = (ClientHandler) obj;
             return Objects.equals(this.clientSocket, that.clientSocket);
         }
 
@@ -112,7 +115,7 @@ public class ConnectionController {
                     "clientSocket=" + clientSocket + ']';
         }
 
-        }
+    }
 
     public static class ConnectionRequest implements java.io.Serializable {
 
