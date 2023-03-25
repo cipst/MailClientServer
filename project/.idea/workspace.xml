@@ -5,13 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5880fde7-3e97-4fe1-a47a-e4533b88f61b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/Database.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java" afterDir="false" />
     </list>
-    <list id="99f0d7f7-713b-454d-b9ff-67675b2cb380" name="Changes by matte" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java" afterDir="false" />
-    </list>
+    <list id="99f0d7f7-713b-454d-b9ff-67675b2cb380" name="Changes by matte" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,25 +53,6 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="LineStatusTrackerManager">
-    <file path="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java">
-      <ranges>
-        <range start1="4" end1="4" start2="4" end2="5" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="8" end1="8" start2="9" end2="10" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="13" end1="14" start2="15" end2="16" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="49" end1="54" start2="51" end2="56" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="55" end1="57" start2="57" end2="59" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="58" end1="63" start2="60" end2="70" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="64" end1="71" start2="71" end2="76" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="72" end1="75" start2="77" end2="80" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="76" end1="80" start2="81" end2="86" changelist="99f0d7f7-713b-454d-b9ff-67675b2cb380" />
-        <range start1="82" end1="84" start2="88" end2="88" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="85" end1="90" start2="89" end2="93" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="99" end1="100" start2="102" end2="103" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="114" end1="115" start2="117" end2="118" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-      </ranges>
-    </file>
-  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -88,12 +68,19 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "last_opened_file_path": "C:/Users/stefa/Documents/GITHUB/prog-3-project/project",
-    "project.structure.last.edited": "Project",
+    "jdk.selected.JAVA_MODULE": "16",
+    "last_opened_file_path": "C:/Users/stefa/Documents/GITHUB/ownion/ProgrammazioneIII",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.toDoOptions"
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -131,8 +118,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1667572206569</updated>
+      <workItem from="1679754236692" duration="2640000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
