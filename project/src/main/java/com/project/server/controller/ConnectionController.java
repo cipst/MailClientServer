@@ -36,7 +36,7 @@ public class ConnectionController {
         }
     }
 
-    public static boolean isIsServerOn() {
+    public static boolean isServerOn() {
         return isServerOn;
     }
 
@@ -62,16 +62,17 @@ public class ConnectionController {
 
                 Object obj = in.readObject();
                 if (obj instanceof ConnectionRequestModel request) {
-                    handleNewConnection(request);
+                    handleConnectionRequest(request);
                 } else if (obj instanceof Email email) {
                     //TODO: handle email HERE
+                    //handleMailRequest(...);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
-        private void handleNewConnection(ConnectionRequestModel request) {
+        private void handleConnectionRequest(ConnectionRequestModel request) {
             try {
                 String email = request.getEmail();
                 String password = request.getPassword();
@@ -81,13 +82,10 @@ public class ConnectionController {
                     throw new Exception("User not found");
                 }
 
-                //TODO: check password THEN add client
-
                 if(!db.checkCredentials(email, password)){
                     throw new Exception("Wrong password");
                 }
                 connectedClients.put(email,new ClientModel(clientSocket.getInetAddress().getHostAddress(),port));
-//                        db.addClient(email, clientSocket);
 
                 //TODO: send emails outbox
                 //TODO: send emails inbox
