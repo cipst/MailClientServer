@@ -2,8 +2,12 @@ package com.project.server.controller;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
+import com.project.models.Email;
+import com.project.server.Database;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -77,6 +81,12 @@ public class ServerGUIController {
                 labelStartStopServer.setText("Stop Server");
                 String fileName = LogController.startServer();
                 logsListView.getItems().add(fileName+".txt");
+
+                Email e1 = new Email("stefano.cipolletta@unito.it", new ArrayList<String>() {{
+                    add("matteo.barone@unito.it");
+                }}, "Ciao", "Come stai?", new Date());
+
+                new Database().insertEmail(e1);
             }else{
                 labelStartStopServer.setText("Start Server");
                 String fileName = LogController.stopServer("stopped");
