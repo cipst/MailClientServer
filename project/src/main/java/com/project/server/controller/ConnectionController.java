@@ -3,6 +3,7 @@ package com.project.server.controller;
 import com.project.models.Email;
 import com.project.server.Database;
 import com.project.server.model.ClientModel;
+import com.project.server.model.ConnectionRequestModel;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -17,6 +18,7 @@ public class ConnectionController {
     private static boolean isServerOn = false;
 
     public ConnectionController(Database db) {
+        connectedClients = new HashMap<>();
         this.db = db;
     }
 
@@ -59,7 +61,7 @@ public class ConnectionController {
                 int clientPort = clientSocket.getPort();
 
                 Object obj = in.readObject();
-                if (obj instanceof ConnectionRequest request) {
+                if (obj instanceof ConnectionRequestModel request) {
                     handleNewConnection(request);
                 } else if (obj instanceof Email email) {
                     //TODO: handle email HERE
@@ -69,7 +71,7 @@ public class ConnectionController {
             }
         }
 
-        private void handleNewConnection(ConnectionRequest request) {
+        private void handleNewConnection(ConnectionRequestModel request) {
             try {
                 String email = request.getEmail();
                 String password = request.getPassword();
@@ -84,9 +86,11 @@ public class ConnectionController {
                 if(!db.checkCredentials(email, password)){
                     throw new Exception("Wrong password");
                 }
-//
+                connectedClients.put(email,new ClientModel(clientSocket.getInetAddress().getHostAddress(),port));
 //                        db.addClient(email, clientSocket);
 
+                //TODO: send emails outbox
+                //TODO: send emails inbox
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -113,32 +117,6 @@ public class ConnectionController {
         public String toString() {
             return "ClientHandler[" +
                     "clientSocket=" + clientSocket + ']';
-        }
-
-    }
-
-    public static class ConnectionRequest implements java.io.Serializable {
-
-        private final String email;
-        private final String password;
-        private final int port;
-
-        public ConnectionRequest(String email, String password, int port) {
-            this.email = email;
-            this.password = password;
-            this.port = port;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public int getPort() {
-            return port;
         }
 
     }
