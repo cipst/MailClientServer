@@ -8,6 +8,7 @@ import java.util.HashMap;
 import com.google.gson.GsonBuilder;
 import com.project.models.Email;
 import com.google.gson.Gson;
+import com.project.server.controller.LogController;
 
 public class Database {
 
@@ -16,11 +17,6 @@ public class Database {
 
     public Database() {
         onLoad();
-        Email e1 = new Email("stefano.cipolletta@unito.it", new ArrayList<String>() {{
-            add("matteo.barone@unito.it");
-        }}, "Ciao", "Come stai?", new Date());
-
-        insertEmail(e1);
     }
 
     private void onLoad() {
@@ -163,7 +159,7 @@ public class Database {
         try {
             // make a copy of the recipients list and add the sender to save the email in his outbox
             ArrayList<String> accounts = new ArrayList<>(email.getRecipients());
-            accounts.add(email.getSender());
+            accounts.add(0,email.getSender());
 
             for (String account : accounts) {
                 File accountsFile = new File(EMAILS_PATH + "/" + account);
@@ -180,6 +176,10 @@ public class Database {
                 }
 
                 writeEmail(email, account);
+                if(account.equals(email.getSender()))
+                    LogController.emailSent(email.getSender(), email.getRecipients());
+                else
+                    LogController.emailReceived(account);
             }
         } catch (Exception e) {
             System.out.println("ERROR insertEmail: " + e);
