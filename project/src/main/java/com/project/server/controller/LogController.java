@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 public class LogController {
 
@@ -68,5 +69,15 @@ public class LogController {
 
         write(String.format("Server %s", reason));
         return newFile.getName();
+    }
+
+    public static void emailSent(String by, ArrayList<String> to){
+        assert !filePath.equals("");
+        write(String.format("Email sent by %s to %s", by, to));
+    }
+
+    public static void emailReceived(String from){
+        assert !filePath.equals("");
+        write(String.format("Email received from %s", from));
     }
 }
