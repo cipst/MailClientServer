@@ -1,10 +1,13 @@
 package com.project.server;
 
+import com.project.Main;
+import com.project.MainController;
 import com.project.server.controller.ConnectionController;
 import com.project.server.controller.LogController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 public class ServerView extends Application {
@@ -24,7 +27,6 @@ public class ServerView extends Application {
         primaryStage.setOnCloseRequest(event -> {
             // INSERT HERE CODE TO CLOSE THE SERVER
             System.out.println("Server closed");
-
             if(ConnectionController.isServerOn())
                 LogController.stopServer("closed");
         });

@@ -22,16 +22,16 @@ public class ConnectionController {
         this.db = db;
     }
 
-    private void runServer(){
-        try{
+    private void runServer() {
+        try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
             Socket clientSocket = null;
 
-            while (isServerOn){
+            while (isServerOn) {
                 clientSocket = serverSocket.accept();
                 new Thread(new ClientHandler(clientSocket)).start();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -78,14 +78,14 @@ public class ConnectionController {
                 String password = request.getPassword();
                 int port = request.getPort();
 
-                if(!db.userExist(email)){
+                if (!db.userExist(email)) {
                     throw new Exception("User not found");
                 }
 
-                if(!db.checkCredentials(email, password)){
+                if (!db.checkCredentials(email, password)) {
                     throw new Exception("Wrong password");
                 }
-                connectedClients.put(email,new ClientModel(clientSocket.getInetAddress().getHostAddress(),port));
+                connectedClients.put(email, new ClientModel(clientSocket.getInetAddress().getHostAddress(), port));
 
                 //TODO: send emails outbox
                 //TODO: send emails inbox
