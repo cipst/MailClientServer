@@ -22,6 +22,12 @@ public class Main extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
 
+            // when the window is closed, the application is closed
+            primaryStage.setOnCloseRequest(event -> {
+                System.out.println("Main closed");
+                System.exit(0);
+            });
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
