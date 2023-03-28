@@ -8,7 +8,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<StackPane alignment="BOTTOM_RIGHT" prefHeight="150.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane fx:controller="com.project.client.controller.ClientGUIController" alignment="BOTTOM_RIGHT" prefHeight="150.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
     <SplitPane dividerPositions="0.23493303571428575" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
         <items>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -22,7 +22,7 @@
                      </AnchorPane>
                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                         <children>
-                           <TreeView prefHeight="389.0" prefWidth="181.0" />
+                           <TreeView fx:id="treeViewEmails" prefHeight="389.0" prefWidth="181.0" />
                         </children>
                      </AnchorPane>
                  </items>
@@ -81,22 +81,22 @@
                                             </Label>
                                             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2">
                                                 <children>
-                                                    <Button mnemonicParsing="false" text="Reply">
+                                                    <Button mnemonicParsing="false" text="Reply" fx:id="btnReply">
                                                         <graphic>
 <!--                                                            <FontIcon iconLiteral="fas-reply" />-->
                                                         </graphic>
                                                     </Button>
-                                                    <Button mnemonicParsing="false" text="Reply All">
+                                                    <Button mnemonicParsing="false" text="Reply All" fx:id="btnReplyAll">
                                                         <graphic>
 <!--                                                            <FontIcon iconLiteral="fas-reply-all" />-->
                                                         </graphic>
                                                     </Button>
-                                                    <Button mnemonicParsing="false" text="Forward">
+                                                    <Button mnemonicParsing="false" text="Forward" fx:id="btnForward">
                                                         <graphic>
 <!--                                                            <FontIcon iconLiteral="fas-reply" rotate="180"  />-->
                                                         </graphic>
                                                     </Button>
-                                                    <Button mnemonicParsing="false" text="Delete">
+                                                    <Button mnemonicParsing="false" text="Delete" fx:id="btnDelete">
                                                         <graphic>
 <!--                                                            <FontIcon iconLiteral="fas-trash-alt" />-->
                                                         </graphic>
@@ -120,14 +120,14 @@
                                 </children></AnchorPane>
                             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="293.0" prefWidth="479.0">
                         <children>
-                           <WebView prefHeight="388.0" prefWidth="605.3333333333334" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           <WebView fx:id="webViewEmail" prefHeight="388.0" prefWidth="605.3333333333334" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         </children></AnchorPane>
                         </items>
                     </SplitPane>
                 </children></AnchorPane>
         </items>
     </SplitPane>
-   <Button alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100%;" text="+">
+   <Button fx:id="btnNewEmail" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100%;" text="+">
       <StackPane.margin>
          <Insets bottom="20.0" right="20.0" />
       </StackPane.margin>
