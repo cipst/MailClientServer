@@ -1,13 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            prefHeight="400.0" prefWidth="600.0">
-
-</AnchorPane>
+<StackPane alignment="BOTTOM_RIGHT" prefHeight="150.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <SplitPane dividerPositions="0.23493303571428575" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+        <items>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+            <children>
+               <SplitPane dividerPositions="0.21179624664879354" layoutY="-2.0" orientation="VERTICAL" prefHeight="500.0" prefWidth="184.0">
+                 <items>
+                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                        <children>
+                           <ImageView fitHeight="100.0" fitWidth="181.0" pickOnBounds="true" preserveRatio="true" />
+                        </children>
+                     </AnchorPane>
+                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                        <children>
+                           <TreeView prefHeight="389.0" prefWidth="181.0" />
+                        </children>
+                     </AnchorPane>
+                 </items>
+               </SplitPane>
+            </children></AnchorPane>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                <children>
+                    <SplitPane dividerPositions="0.20889487870619944" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="497.0" prefWidth="607.0">
+                        <items>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                <children>
+                                    <GridPane hgap="5.0" layoutX="-1.0" layoutY="-1.0" prefHeight="100.0" prefWidth="605.0">
+                                        <columnConstraints>
+                                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="133.0" minWidth="10.0" prefWidth="62.0" />
+                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="291.00000762939453" minWidth="10.0" prefWidth="226.0" />
+                                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="315.00000000000006" minWidth="10.0" prefWidth="306.00000000000006" />
+                                        </columnConstraints>
+                                        <rowConstraints>
+                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        </rowConstraints>
+                                        <children>
+                                            <Label text="From:" textFill="#00000099">
+                                                <font>
+                                                    <Font name="SansSerif Regular" size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <Label text="To:" textFill="#00000099" GridPane.rowIndex="1">
+                                                <font>
+                                                    <Font name="SansSerif Regular" size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <Label text="Subject:" textFill="#00000099" GridPane.rowIndex="2">
+                                                <font>
+                                                    <Font name="SansSerif Regular" size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <Label text="stefano@gmail.com" GridPane.columnIndex="1">
+                                                <font>
+                                                    <Font name="SansSerif Regular" size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <Label text="pippo@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                <font>
+                                                    <Font name="SansSerif Regular" size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <Label text="28/03/2023" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                <font>
+                                                    <Font name="SansSerif Regular" size="14.0" />
+                                                </font>
+                                                <GridPane.margin>
+                                                    <Insets right="10.0" />
+                                                </GridPane.margin>
+                                            </Label>
+                                            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2">
+                                                <children>
+                                                    <Button mnemonicParsing="false" text="Reply">
+                                                        <graphic>
+<!--                                                            <FontIcon iconLiteral="fas-reply" />-->
+                                                        </graphic>
+                                                    </Button>
+                                                    <Button mnemonicParsing="false" text="Reply All">
+                                                        <graphic>
+<!--                                                            <FontIcon iconLiteral="fas-reply-all" />-->
+                                                        </graphic>
+                                                    </Button>
+                                                    <Button mnemonicParsing="false" text="Forward">
+                                                        <graphic>
+<!--                                                            <FontIcon iconLiteral="fas-reply" rotate="180"  />-->
+                                                        </graphic>
+                                                    </Button>
+                                                    <Button mnemonicParsing="false" text="Delete">
+                                                        <graphic>
+<!--                                                            <FontIcon iconLiteral="fas-trash-alt" />-->
+                                                        </graphic>
+                                                    </Button>
+                                                </children>
+                                            </HBox>
+                                            <MenuButton mnemonicParsing="false" style="-fx-background-color: transparent;" text="stefano.cipolletta@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                <items>
+                                                    <MenuItem mnemonicParsing="false" text="alessio@gmail.com" />
+                                                    <MenuItem mnemonicParsing="false" text="mauro@gmail.com" />
+                                                </items>
+                                                <font>
+                                                    <Font name="SansSerif Regular" size="14.0" />
+                                                </font>
+                                                <GridPane.margin>
+                                                    <Insets left="-8.5" />
+                                                </GridPane.margin>
+                                            </MenuButton>
+                                        </children>
+                                    </GridPane>
+                                </children></AnchorPane>
+                            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="293.0" prefWidth="479.0">
+                        <children>
+                           <WebView prefHeight="388.0" prefWidth="605.3333333333334" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        </children></AnchorPane>
+                        </items>
+                    </SplitPane>
+                </children></AnchorPane>
+        </items>
+    </SplitPane>
+   <Button alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100%;" text="+">
+      <StackPane.margin>
+         <Insets bottom="20.0" right="20.0" />
+      </StackPane.margin>
+      <font>
+         <Font name="SansSerif Bold" size="20.0" />
+      </font>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></Button>
+</StackPane>

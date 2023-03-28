@@ -84,7 +84,7 @@ public class ServerGUIController {
 
                 Email e1 = new Email("stefano.cipolletta@unito.it", new ArrayList<String>() {{
                     add("matteo.barone@unito.it");
-                }}, "Ciao", "Come stai?", new Date());
+                }}, "Ciao", "Come stai?", "28/03/2023 16:39");
 
                 new Database().insertEmail(e1);
             }else{

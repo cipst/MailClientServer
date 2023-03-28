@@ -177,7 +177,7 @@ public class Database {
 
                 writeEmail(email, account);
                 if(account.equals(email.getSender()))
-                    LogController.emailSent(email.getSender(), email.getRecipients());
+                    LogController.emailSent(email.getSender(), (ArrayList<String>) email.getRecipients());
                 else
                     LogController.emailReceived(account);
             }

@@ -1,12 +1,14 @@
 module com.project {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.graphics;
+    requires javafx.base;
+    requires javafx.web;
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
-    requires javafx.graphics;
     requires com.google.gson;
 
     opens com.project to javafx.fxml;
@@ -17,4 +19,5 @@ module com.project {
     exports com.project.server.controller;
     exports com.project.server.model;
     exports com.project.client;
+    exports com.project.models;
 }
