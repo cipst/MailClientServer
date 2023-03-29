@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+
+<StackPane alignment="BOTTOM_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.client.controller.NewEmailGUIController">
+   <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <GridPane alignment="TOP_CENTER" prefHeight="97.0" prefWidth="567.0">
+         <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" maxWidth="294.0" minWidth="10.0" prefWidth="78.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="536.8000259399414" minWidth="10.0" prefWidth="521.3333333333335" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="79.0" prefWidth="332.0" text="From :">
+            <GridPane.margin>
+               <Insets right="5.0" />
+            </GridPane.margin>
+            <font>
+               <Font name="SansSerif Regular" size="14.0" />
+            </font>
+         </Label>
+         <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="145.0" prefWidth="400.0" text="To :" GridPane.rowIndex="1">
+            <GridPane.margin>
+               <Insets right="5.0" />
+            </GridPane.margin>
+            <font>
+               <Font name="SansSerif Regular" size="14.0" />
+            </font>
+         </Label>
+         <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="340.0" prefWidth="482.0" text="Subject :" GridPane.rowIndex="2">
+            <font>
+               <Font name="SansSerif Bold" size="14.0" />
+            </font>
+            <GridPane.margin>
+               <Insets right="5.0" />
+            </GridPane.margin>
+         </Label>
+         <Label fx:id="lblFrom" contentDisplay="CENTER" prefHeight="249.0" prefWidth="562.0" GridPane.columnIndex="1">
+            <GridPane.margin>
+               <Insets left="5.0" />
+            </GridPane.margin>
+            <font>
+               <Font name="SansSerif Bold" size="14.0" />
+            </font>
+         </Label>
+         <TextField fx:id="toField" promptText="Receivers" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <GridPane.margin>
+               <Insets right="3.0" />
+            </GridPane.margin>
+            <font>
+               <Font name="SansSerif Regular" size="14.0" />
+            </font>
+         </TextField>
+         <TextField fx:id="subjectField" promptText="TITLE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <font>
+               <Font name="SansSerif Bold" size="14.0" />
+            </font>
+            <GridPane.margin>
+               <Insets right="3.0" />
+            </GridPane.margin>
+         </TextField>
+      </GridPane>
+      <HTMLEditor fx:id="txtEmail" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="280.0" prefWidth="600.0" VBox.vgrow="ALWAYS" />
+<!--      <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="600.0">-->
+<!--         <Button fx:id="btnCancel" mnemonicParsing="false" text="Cancel">-->
+<!--            <opaqueInsets>-->
+<!--               <Insets/>-->
+<!--            </opaqueInsets>-->
+<!--            <HBox.margin>-->
+<!--               <Insets left="3.0" right="10.0"/>-->
+<!--            </HBox.margin>-->
+<!--         </Button>-->
+<!--         <Button fx:id="btnSend" mnemonicParsing="false" text="Send"-->
+<!--                 textAlignment="CENTER">-->
+<!--            <HBox.margin>-->
+<!--               <Insets left="10.0"/>-->
+<!--            </HBox.margin>-->
+<!--         </Button>-->
+<!--      </HBox>-->
+   </VBox>
+   <Button mnemonicParsing="false" style="-fx-background-radius: 100%; -fx-min-width: 40; -fx-min-height: 40;">
+      <StackPane.margin>
+         <Insets bottom="20.0" right="20.0" />
+      </StackPane.margin>
+<!--      <FontIcon iconLiteral="fas-reply" />-->
+   </Button>
+</StackPane>
