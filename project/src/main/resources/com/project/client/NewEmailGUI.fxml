@@ -5,7 +5,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<?import javafx.scene.Cursor?>
 <StackPane alignment="BOTTOM_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.client.controller.NewEmailGUIController">
    <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <GridPane alignment="TOP_CENTER" prefHeight="97.0" prefWidth="567.0">
@@ -67,7 +69,7 @@
             </GridPane.margin>
          </TextField>
       </GridPane>
-      <HTMLEditor fx:id="txtEmail" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="280.0" prefWidth="600.0" VBox.vgrow="ALWAYS" />
+      <HTMLEditor fx:id="msgHtml" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="280.0" prefWidth="600.0" VBox.vgrow="ALWAYS" />
 <!--      <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="600.0">-->
 <!--         <Button fx:id="btnCancel" mnemonicParsing="false" text="Cancel">-->
 <!--            <opaqueInsets>-->
@@ -85,10 +87,15 @@
 <!--         </Button>-->
 <!--      </HBox>-->
    </VBox>
-   <Button mnemonicParsing="false" style="-fx-background-radius: 100%; -fx-min-width: 40; -fx-min-height: 40;">
+   <Button fx:id="btnSend" mnemonicParsing="false" onAction="#sendEmail" style="-fx-background-radius: 100%; -fx-min-width: 40; -fx-min-height: 40;">
       <StackPane.margin>
          <Insets bottom="20.0" right="20.0" />
       </StackPane.margin>
-<!--      <FontIcon iconLiteral="fas-reply" />-->
+      <graphic>
+         <FontIcon iconLiteral="fab-telegram-plane" iconSize="18"/>
+      </graphic>
+      <cursor>
+         <Cursor fx:constant="HAND"/>
+      </cursor>
    </Button>
 </StackPane>

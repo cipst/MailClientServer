@@ -12,6 +12,7 @@ module com.project {
     requires com.google.gson;
 
     opens com.project to javafx.fxml;
+    opens com.project.client.controller to javafx.fxml;
     opens com.project.models to com.google.gson;
 
     exports com.project;

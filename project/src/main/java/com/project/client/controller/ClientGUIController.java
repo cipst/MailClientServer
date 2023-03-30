@@ -2,20 +2,18 @@ package com.project.client.controller;
 
 import com.project.client.ClientGUI;
 import com.project.models.Email;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
-import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ClientGUIController {
 
@@ -35,28 +33,72 @@ public class ClientGUIController {
     @FXML
     public Button btnNewEmail;
     @FXML
-    public TreeView<String> treeViewEmailsInbox;
+    public ListView<Email> listViewEmails;
     @FXML
-    public TreeView<String> treeViewEmailsOutbox;
+    public Label sender;
+    @FXML
+    public MenuButton recipients;
+    @FXML
+    public Label subject;
     @FXML
     public WebView webViewEmail;
 
     private static Actions action;
     private static Email selectedEmail;
-//    private static User user;
 
     public void initialize() {
         System.out.println("ClientGUIController initialized");
+        btnReply.setDisable(true);
+        btnReplyAll.setDisable(true);
+        btnForward.setDisable(true);
+        btnDelete.setDisable(true);
 
-        //Select all SplitPane dividers and set their position to 0.5
 
-        webViewEmail.getEngine().loadContent("<h1>Test</h1><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><h1>CIAO</h1>");
+        listViewEmails.itemsProperty().bind(ConnectionController.emailsInboxProperty());
 
-        treeViewEmailsInbox.setRoot(new TreeItem<>("Inbox"));
-        treeViewEmailsOutbox.setRoot(new TreeItem<>("Outbox"));
+        /**
+         * Set the cell factory for the list view
+         * This will allow us to set the text of the list view to the subject of the email
+         * instead of the default toString() method instead of the address
+         */
+        listViewEmails.setCellFactory(new Callback<>() {
+            @Override
+            public ListCell<Email> call(ListView<Email> param) {
+                return new ListCell<>() {
+                    @Override
+                    protected void updateItem(Email item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            setText(item.getSubject());
+                        } else {
+                            setText("");
+                        }
+                    }
+                };
+            }
+        });
 
-//        treeViewEmailsInbox.getRoot().getChildren().add(new TreeItem<>("Email 1"));
+        listViewEmails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                System.out.println("Selected item: " + newValue);
+                btnReply.setDisable(false);
+                btnReplyAll.setDisable(false);
+                btnForward.setDisable(false);
+                btnDelete.setDisable(false);
+                selectedEmail = newValue;
+                sender.setText(newValue.getSender());
 
+                recipients.setText(newValue.getRecipients().get(0));
+                for (int i = 1; i < newValue.getRecipients().size(); i++) {
+                    recipients.getItems().add(new MenuItem(newValue.getRecipients().get(i)));
+                }
+
+                subject.setText(newValue.getSubject());
+                webViewEmail.getEngine().loadContent(newValue.getMessage());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
     }
 
     private static void launchEmailWindow() throws IOException {
@@ -72,7 +114,7 @@ public class ClientGUIController {
     }
 
     @FXML
-    public void newEmail(){
+    public void newEmail() {
         System.out.println("btnNewEmail clicked");
         try {
             action = Actions.NEW_EMAIL;
@@ -128,9 +170,19 @@ public class ClientGUIController {
     public void delete() {
         System.out.println("btnDelete clicked");
         try {
-            var response = new Alert(Alert.AlertType.CONFIRMATION, "Sei sicuro di voler eliminare la mail?", ButtonType.YES, ButtonType.NO).showAndWait();
+            Optional<ButtonType> response = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this email?", ButtonType.YES, ButtonType.NO).showAndWait();
             if (response.isPresent() && response.get() == ButtonType.YES) {
-                ClientController.deleteEmail(selectedEmail);
+                ConnectionController.deleteEmail(selectedEmail);
+                selectedEmail = null;
+                sender.setText("");
+                recipients.setText("");
+                recipients.getItems().clear();
+                subject.setText("");
+                webViewEmail.getEngine().loadContent("");
+                btnReply.setDisable(true);
+                btnReplyAll.setDisable(true);
+                btnForward.setDisable(true);
+                btnDelete.setDisable(true);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -143,9 +195,15 @@ public class ClientGUIController {
         return action;
     }
 
+    public static Email getSelectedEmail() {
+        return selectedEmail;
+    }
 
-    public void showSelectedEmail(){
+    public static void setSelectedEmail(Email selectedEmail) {
+        ClientGUIController.selectedEmail = selectedEmail;
+    }
 
-        treeViewEmailsInbox.getSelectionModel().getSelectedItem().getValue();
+    public void showSelectedEmail() {
+//        treeViewEmailsInbox.getSelectionModel().getSelectedItem().getValue();
     }
 }
