@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.client.controller.LoginGUIController">
+    <VBox alignment="CENTER" layoutX="216.0" layoutY="106.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Label alignment="BOTTOM_CENTER" contentDisplay="CENTER" text="Login Window" textAlignment="CENTER">
+            <font>
+                <Font name="SansSerif Bold" size="20.0" />
+            </font>
+        </Label>
+        <TextField fx:id="emailAddressField" alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="400.0" promptText="Enter your Email address here">
+            <VBox.margin>
+                <Insets left="40.0" right="40.0" top="20.0" />
+            </VBox.margin>
+         <font>
+            <Font name="SansSerif Regular" size="14.0" />
+         </font>
+        </TextField>
+        <TextField fx:id="passwordField" alignment="CENTER" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="300.0" promptText="Enter your Password here">
+            <VBox.margin>
+                <Insets left="40.0" right="40.0" top="20.0" />
+            </VBox.margin>
+         <font>
+            <Font name="SansSerif Regular" size="14.0" />
+         </font>
+        </TextField>
+        <Button fx:id="btnLogin" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#login" prefHeight="30.0" prefWidth="60.0" text="Login" textAlignment="CENTER">
+            <VBox.margin>
+                <Insets top="30.0" />
+            </VBox.margin>
+         <font>
+            <Font name="SansSerif Regular" size="14.0" />
+         </font>
+        </Button>
+    </VBox>
+</AnchorPane>

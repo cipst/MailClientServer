@@ -1,4 +1,4 @@
-package com.project.server.model;
+package com.project.models;
 
 import com.project.models.Email;
 

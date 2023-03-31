@@ -11,14 +11,11 @@ module com.project {
     requires org.kordamp.bootstrapfx.core;
     requires com.google.gson;
 
-    opens com.project to javafx.fxml;
     opens com.project.client.controller to javafx.fxml;
     opens com.project.models to com.google.gson;
 
-    exports com.project;
     exports com.project.server;
     exports com.project.server.controller;
-    exports com.project.server.model;
     exports com.project.client;
     exports com.project.client.controller;
     exports com.project.models;

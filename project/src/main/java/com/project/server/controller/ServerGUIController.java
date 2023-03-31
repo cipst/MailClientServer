@@ -26,7 +26,11 @@ public class ServerGUIController {
 
     private Thread thread;
 
+    private ConnectionController connectionController = null;
+
     public void initialize() {
+        connectionController = new ConnectionController(new Database());
+
         File emailFile = new File(LogController.getLogsPath()+"/");
         File[] files = emailFile.listFiles();
 
@@ -77,23 +81,27 @@ public class ServerGUIController {
     public void triggerToggle() {
         try{
             if(btnStartStopServer.isSelected()){
-                ConnectionController.setIsServerOn(true);
+
+                connectionController.runServer();
+
                 labelStartStopServer.setText("Stop Server");
                 String fileName = LogController.startServer();
                 logsListView.getItems().add(fileName+".txt");
 
-                Email e1 = new Email("stefano.cipolletta@unito.it", new ArrayList<String>() {{
-                    add("matteo.barone@unito.it");
-                }}, "Ciao", "Come stai?", "28/03/2023 16:39");
 
-                new Database().insertEmail(e1);
+//                Email e1 = new Email("stefano.cipolletta@unito.it", new ArrayList<String>() {{
+//                    add("matteo.barone@unito.it");
+//                }}, "Ciao", "Come stai?", "28/03/2023 16:39");
+//
+//                new Database().insertEmail(e1);
             }else{
                 labelStartStopServer.setText("Start Server");
                 String fileName = LogController.stopServer("stopped");
                 System.out.println("fileName: " + fileName);
                 logsListView.getItems().remove(logsListView.getItems().size() - 1);
                 logsListView.getItems().add(fileName);
-                ConnectionController.setIsServerOn(false);
+
+                connectionController.stopServer();
             }
             logsListView.getSelectionModel().selectLast();
         }catch(Exception e){

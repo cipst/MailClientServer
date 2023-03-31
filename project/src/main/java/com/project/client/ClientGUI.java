@@ -9,28 +9,18 @@ import java.io.IOException;
 
 public class ClientGUI extends Application {
 
-    private final String email;
-    private final String password;
-
-    public ClientGUI(String email, String password){
-        System.out.println("Client email: " + email);
-        System.out.println("Client password: " + password);
-        this.email = email;
-        this.password = password;
-    }
-
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(ClientGUI.class.getResource("ClientGUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(ClientGUI.class.getResource("LoginGUI.fxml"));
 
         Scene scene = new Scene(loader.load());
-        primaryStage.setTitle(this.email);
+        primaryStage.setTitle("Login");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
-        System.out.println("Client opened");
+        System.out.println("Login opened");
 
-        primaryStage.setOnCloseRequest(event -> System.out.println("Client closed"));
+        primaryStage.setOnCloseRequest(event -> System.out.println("Login closed"));
     }
 
     @Override

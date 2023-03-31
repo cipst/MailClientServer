@@ -1,47 +1,55 @@
 package com.project.server.controller;
 
+import com.project.models.ConnectionRequestModel;
 import com.project.models.Email;
+import com.project.models.ResponseModel;
 import com.project.server.Database;
-import com.project.server.model.ClientModel;
-import com.project.server.model.ConnectionRequestModel;
 
-import java.io.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class ConnectionController {
     private final int LISTENING_PORT = 1234;
     private final Database db;
-    private HashMap<String, ClientModel> connectedClients;
+    private ArrayList<String> connectedClients;
     private static boolean isServerOn = false;
 
+    private Thread thread;
+
     public ConnectionController(Database db) {
-        connectedClients = new HashMap<>();
+        connectedClients = new ArrayList<>();
         this.db = db;
+        thread = new Thread(() -> {
+            try {
+                ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
+                Socket clientSocket = null;
+
+                while (isServerOn) {
+                    clientSocket = serverSocket.accept();
+                    new Thread(new ClientHandler(clientSocket)).start();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    private void runServer() {
-        try {
-            ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
-            Socket clientSocket = null;
+    public void runServer() {
+        isServerOn = true;
+        thread.start();
+    }
 
-            while (isServerOn) {
-                clientSocket = serverSocket.accept();
-                new Thread(new ClientHandler(clientSocket)).start();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public void stopServer() {
+        thread.interrupt();
+        isServerOn = false;
     }
 
     public static boolean isServerOn() {
         return isServerOn;
-    }
-
-    public static void setIsServerOn(boolean isServerOn) {
-        ConnectionController.isServerOn = isServerOn;
     }
 
     private final class ClientHandler implements Runnable {
@@ -62,7 +70,8 @@ public class ConnectionController {
 
                 Object obj = in.readObject();
                 if (obj instanceof ConnectionRequestModel request) {
-                    handleConnectionRequest(request);
+                    ResponseModel response = handleConnectionRequest(request);
+                    out.writeObject(response);
                 } else if (obj instanceof Email email) {
                     //TODO: handle email HERE
                     //handleMailRequest(...);
@@ -72,20 +81,24 @@ public class ConnectionController {
             }
         }
 
-        private void handleConnectionRequest(ConnectionRequestModel request) {
+        private ResponseModel handleConnectionRequest(ConnectionRequestModel request) {
             try {
+                System.out.println("--- Handling connection request");
                 String email = request.getEmail();
                 String password = request.getPassword();
-                int port = request.getPort();
 
                 if (!db.userExist(email)) {
-                    throw new Exception("User not found");
+//                    throw new Exception("User not found");
+                    return new ResponseModel(false, "User not found", null);
                 }
 
                 if (!db.checkCredentials(email, password)) {
-                    throw new Exception("Wrong password");
+//                    throw new Exception("Wrong password");
+                    return new ResponseModel(false, "Wrong password", null);
                 }
-                connectedClients.put(email, new ClientModel(clientSocket.getInetAddress().getHostAddress(), port));
+                connectedClients.add(email);
+
+                return new ResponseModel(true, "Connection successful", null);
 
                 //TODO: send emails outbox
                 //TODO: send emails inbox

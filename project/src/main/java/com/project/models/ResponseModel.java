@@ -1,4 +1,4 @@
-package com.project.server.model;
+package com.project.models;
 
 import java.io.Serializable;
 
@@ -17,7 +17,7 @@ public class ResponseModel implements Serializable {
     }
 
     public ResponseModel(boolean success) {
-        this(success, "Undefined", null);
+        this(success, "", null);
     }
 
     public boolean isSuccessful() {
