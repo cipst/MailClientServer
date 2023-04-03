@@ -9,7 +9,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 public class NewEmailGUIController {
@@ -37,7 +39,7 @@ public class NewEmailGUIController {
     @FXML
     public void initialize() {
         System.out.println("NewEmailGUIController initialized");
-        lblFrom.setText("stefano@gmail.com");
+        lblFrom.setText(UserController.getUser().getAddress());
 //                toField.setText(ClientGUIController.getTo());
 //                subjectField.setText(ClientGUIController.getSubject());
 //                txtEmail.setHtmlText(ClientGUIController.getTxtEmail());
@@ -149,7 +151,7 @@ public class NewEmailGUIController {
         System.out.println("Send email");
 //        ClientGUIController.setSelectedEmail();
         ConnectionController.sendEmail(new Email(lblFrom.getText(), addresses, subjectField.getText(), msgHtml.getHtmlText().replace("contenteditable=\"true\"", "contenteditable=\"false\""),
-                ""));
+                DateFormat.getDateTimeInstance().format(new Date())));
 
         // Close window
         Stage stage = (Stage) btnSend.getScene().getWindow();

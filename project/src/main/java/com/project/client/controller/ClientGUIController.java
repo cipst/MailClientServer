@@ -41,6 +41,8 @@ public class ClientGUIController {
     @FXML
     public Label subject;
     @FXML
+    public Label date;
+    @FXML
     public WebView webViewEmail;
 
     private static Actions action;
@@ -53,6 +55,7 @@ public class ClientGUIController {
         btnForward.setDisable(true);
         btnDelete.setDisable(true);
 
+//        sender.setText(UserController.getUser().getAddress());
 
         listViewEmails.itemsProperty().bind(ConnectionController.emailsInboxProperty());
 
@@ -94,6 +97,7 @@ public class ClientGUIController {
                 }
 
                 subject.setText(newValue.getSubject());
+                date.setText(newValue.getDate());
                 webViewEmail.getEngine().loadContent(newValue.getMessage());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -178,6 +182,7 @@ public class ClientGUIController {
                 recipients.setText("");
                 recipients.getItems().clear();
                 subject.setText("");
+                date.setText("");
                 webViewEmail.getEngine().loadContent("");
                 btnReply.setDisable(true);
                 btnReplyAll.setDisable(true);
