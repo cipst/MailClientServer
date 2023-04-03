@@ -45,3 +45,4 @@ bin/
 /src/main/resources/com/project/server/logs/
 /src/main/resources/com/project/server/*.txt
 /src/main/resources/com/project/server/*.dat
+/src/main/resources/com/project/server/*.json
