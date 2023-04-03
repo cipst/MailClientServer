@@ -36,8 +36,7 @@ public class LoginGUIController {
 
             UserController.setUser(new UserModel(emailAddressField.getText(), passwordField.getText()));
 
-            boolean success = ConnectionController.startConnection();
-            if (success) {
+            if (ConnectionController.startConnection()) {
                 FXMLLoader loader = new FXMLLoader(ClientGUI.class.getResource("ClientGUI.fxml"));
 
                 Scene scene = new Scene(loader.load());
@@ -51,8 +50,13 @@ public class LoginGUIController {
 
                 stage.setOnCloseRequest(event -> {
                     System.out.println("Client closed");
-                    ConnectionController.endConnection();
-                    System.exit(0);
+                    if (ConnectionController.endConnection()) {
+                        System.out.println("Connection closed");
+                        System.exit(0);
+                    } else {
+                        System.out.println("Error closing connection");
+                        new Alert(Alert.AlertType.ERROR, "Error closing connection").showAndWait();
+                    }
                 });
             }
         } catch (IOException e) {

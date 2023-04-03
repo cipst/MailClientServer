@@ -22,7 +22,9 @@ public class ConnectionController {
     private static final int CONNECTION_PORT = 1234;
     private static ListProperty<Email> emailsInbox = new SimpleListProperty<>();
     private static ObservableList<Email> emailsInboxContent = FXCollections.observableArrayList();
-    private static Socket socket = null;
+    private static Socket socket;
+    private static ObjectOutputStream outStream;
+    private static ObjectInputStream inStream;
 
     static {
         emailsInbox.set(emailsInboxContent);
@@ -38,18 +40,16 @@ public class ConnectionController {
         UserModel user = UserController.getUser();
 
         System.out.println("[" + Thread.currentThread().getName() + "] threadConnection avviato");
-        ObjectOutputStream outStream = null;
-        ObjectInputStream inStream = null;
-        try {
-            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT); // Creo il socket per inviare i dati al server
-            outStream = new ObjectOutputStream(socket.getOutputStream()); // Recupero lo stream di uscita verso il socket
 
-            //TODO USER MODEL
+        try {
+            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT);
+            outStream = new ObjectOutputStream(socket.getOutputStream());
+            inStream = new ObjectInputStream(socket.getInputStream());
+
             ConnectionRequestModel conn = new ConnectionRequestModel(user.getAddress(), user.getPassword(), ConnectionRequestModel.Status.CONNECT); // Creo l'oggetto da inviare per richiedere la connessione al server
             outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
 
             socket.setSoTimeout(2000);
-            inStream = new ObjectInputStream(socket.getInputStream());
             Object res = inStream.readObject();
             if (res instanceof ResponseModel && ((ResponseModel) res).isSuccessful()) {
                 System.out.println("Connessione al server stabilita");
@@ -69,36 +69,31 @@ public class ConnectionController {
             return false;
         } finally {
             System.out.println("[" + Thread.currentThread().getName() + "] threadConnection terminato");
+            try {
+                outStream.close();
+                inStream.close();
+                socket.close();
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+//                e.printStackTrace();
+            }
         }
-//                finally {
-//                    if (s != null) {                                                                                // Chiudo il socket se l'ho aperto correttamente
-//                        try {
-//                            s.close();
-//                            System.out.println("Connessione al socket chiusa [threadConnection]");
-//                        } catch (IOException ex) {
-//                            System.out.println(ex.getMessage());
-//                        }
-//                    }
-//                }
     }
 
     public static boolean endConnection() {
-        ObjectOutputStream outStream = null;
-        ObjectInputStream inStream = null;
         try {
-            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT); // Creo il socket per inviare i dati al server
-            outStream = new ObjectOutputStream(socket.getOutputStream()); // Recupero lo stream di uscita verso il socket
+            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT);
+            outStream = new ObjectOutputStream(socket.getOutputStream());
+            inStream = new ObjectInputStream(socket.getInputStream());
 
             ConnectionRequestModel conn = new ConnectionRequestModel(UserController.getUser().getAddress(), UserController.getUser().getPassword(), ConnectionRequestModel.Status.DISCONNECT); // Creo l'oggetto da inviare per richiedere la disconnessione al server
             outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
 
-            socket.setSoTimeout(2000);
-            inStream = new ObjectInputStream(socket.getInputStream());
+            socket.setSoTimeout(50000);
             Object res = inStream.readObject();
+
             if (res instanceof ResponseModel && ((ResponseModel) res).isSuccessful()) {
                 System.out.println("Disconnessione dal server stabilita");
-
-                socket.close();
                 return true;
             } else {
                 System.out.println("Disconnessione dal server non stabilita");
@@ -108,13 +103,21 @@ public class ConnectionController {
         } catch (IOException e) {
             new Alert(Alert.AlertType.ERROR, "Connection Error").showAndWait();
             System.out.println(e.getMessage() + " [threadConnection]");
-//            e.printStackTrace();
+            e.printStackTrace();
             return false;
         } catch (Exception e) {
             new Alert(Alert.AlertType.ERROR, "Something went wrong\nTry later.").showAndWait();
             return false;
         } finally {
             System.out.println("[" + Thread.currentThread().getName() + "] threadConnection terminato");
+            try {
+                outStream.close();
+                inStream.close();
+                socket.close();
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+//                e.printStackTrace();
+            }
         }
     }
 

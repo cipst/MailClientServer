@@ -85,7 +85,7 @@ public class ConnectionController {
                 String password = request.getPassword();
                 ConnectionRequestModel.Status status = request.getStatus();
 
-                if (status.equals(ConnectionRequestModel.Status.DISCONNECT)) {
+                if (status == ConnectionRequestModel.Status.DISCONNECT) {
                     connectedClients.remove(email);
                     LogController.clientDisconnected(email);
                     return new ResponseModel(true, "Disconnection successful", null);
