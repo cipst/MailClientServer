@@ -61,6 +61,7 @@ public class LoginGUIController {
             }
         } catch (IOException e) {
             System.out.println("Error opening Client GUI");
+            e.printStackTrace();
         }
     }
 }

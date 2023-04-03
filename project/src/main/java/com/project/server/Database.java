@@ -39,6 +39,23 @@ public class Database {
             FileWriter writer = new FileWriter(DATABASE_PATH);
             writer.write(g.toJson(accounts));
             writer.close();
+
+            for (String account : accounts.keySet()) {
+                File accountsFile = new File(EMAILS_PATH + "/" + account);
+                if (accountsFile.mkdirs()) {
+                    String statsPath = EMAILS_PATH + "/" + account + "/" + "stats.json";
+
+                    File stats = new File(statsPath);
+                    stats.createNewFile();
+
+                    HashMap<String, String> counter = new HashMap<>();
+                    counter.put("emailReceived", "0");
+
+                    FileWriter writerStats = new FileWriter(statsPath);
+                    writerStats.write(g.toJson(counter));
+                    writerStats.close();
+                }
+            }
         } catch (Exception e) {
             System.out.println("ERROR onLoad: " + e);
         }
@@ -99,14 +116,17 @@ public class Database {
             FileWriter writer = new FileWriter(emailFilePath);
             writer.write(g.toJson(emails));
             writer.close();
+
         } catch (Exception e) {
             System.out.println("ERROR write: " + e);
         }
     }
 
-    private ArrayList<EmailSerializable> readEmailsByDate(String to, String date) {
-        String emailFilePath = EMAILS_PATH + "/" + to + "/" + date + ".json";
-        ArrayList<EmailSerializable> emails = null;
+    private ArrayList<EmailSerializable> readEmailsByDate(String address, String date) {
+        String emailFilePath = EMAILS_PATH + "/" + address + "/" + date + ".json";
+        ArrayList<EmailSerializable> emails = new ArrayList<>();
+
+        System.out.println("PATH" + emailFilePath);
 
         try {
             Reader reader = new FileReader(emailFilePath);
@@ -115,15 +135,17 @@ public class Database {
             emails = g.fromJson(reader, ArrayList.class);
             reader.close();
         } catch (Exception e) {
-            System.out.println("ERROR read: " + e);
+            System.out.println("ERROR read emails by date: " + e);
         }
+
+        System.out.println(emails.get(0));
 
         return emails;
     }
 
-    public HashMap<String, ArrayList<EmailSerializable>> readAllEmails(String to) {
-        String emailFilePath = EMAILS_PATH + "/" + to + "/";
-        HashMap<String, ArrayList<EmailSerializable>> emails = new HashMap<>();
+    public ArrayList<EmailSerializable> readAllEmails(String address) {
+        String emailFilePath = EMAILS_PATH + "/" + address + "/";
+        ArrayList<EmailSerializable> emails = new ArrayList<>();
 
         try {
             File emailFile = new File(emailFilePath);
@@ -131,25 +153,85 @@ public class Database {
 
             assert files != null;
             for (File file : files) {
-                String date = file.getName().substring(0, file.getName().length() - 4);
-                emails.put(date, readEmailsByDate(to, date));
+                if (file.getName().compareTo("stats.json") != 0) {
+                    String date = file.getName().substring(0, file.getName().length() - 5);
+                    emails.addAll(readEmailsByDate(address, date));
+                }
             }
+            System.out.println("READ ALL EMAILS ----: " + emails.get(0));
         } catch (Exception e) {
-            System.out.println("ERROR read: " + e);
+            System.out.println("ERROR read all emails: " + e);
         }
 
         return emails;
     }
 
+    public int readStats(String address) {
+        String statsPath = EMAILS_PATH + "/" + address + "/" + "stats.json";
+        int id = 0;
+
+        try {
+            Reader reader = new FileReader(statsPath);
+            Gson g = new Gson();
+
+            HashMap<String, String> stats = g.fromJson(reader, HashMap.class);
+            reader.close();
+            System.out.println("STATS: " + stats);
+            id = Integer.parseInt(stats.get("emailReceived"));
+        } catch (Exception e) {
+            System.out.println("ERROR read stats: " + e);
+        }
+
+        return id;
+    }
+
+    private void incrementStats(String account) {
+        String statsPath = EMAILS_PATH + "/" + account + "/" + "stats.json";
+
+        try {
+            Reader reader = new FileReader(statsPath);
+            Gson g = new GsonBuilder().setPrettyPrinting().create();
+
+            HashMap<String, String> stats = g.fromJson(reader, HashMap.class);
+            reader.close();
+
+            stats.put("emailReceived", String.valueOf(Integer.parseInt(stats.get("emailReceived")) + 1));
+
+            FileWriter writer = new FileWriter(statsPath);
+            writer.write(g.toJson(stats));
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("ERROR updateStats: " + e);
+        }
+    }
+
+    private void decrementStats(String account) {
+        String statsPath = EMAILS_PATH + "/" + account + "/" + "stats.json";
+
+        try {
+            Reader reader = new FileReader(statsPath);
+            Gson g = new GsonBuilder().setPrettyPrinting().create();
+
+            HashMap<String, String> stats = g.fromJson(reader, HashMap.class);
+            reader.close();
+
+            stats.put("emailReceived", String.valueOf(Integer.parseInt(stats.get("emailReceived")) - 1));
+
+            FileWriter writer = new FileWriter(statsPath);
+            writer.write(g.toJson(stats));
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("ERROR updateStats: " + e);
+        }
+    }
+
     public void insertEmail(EmailSerializable email) {
         try {
+            //TODO: retrieve last email id from database and increment it
             // make a copy of the recipients list and add the sender to save the email in his outbox
-            ArrayList<String> accounts = new ArrayList<>(email.getRecipients());
-            accounts.add(0, email.getSender());
 
-            for (String account : accounts) {
-                File accountsFile = new File(EMAILS_PATH + "/" + account);
-                accountsFile.mkdirs();
+            for (String account : email.getRecipients()) {
+                email.setId(readStats(account) + 1);
 
                 String emailFileName = email.getDate().split(" ")[0].replaceAll("/", "-");
                 String emailFilePath = EMAILS_PATH + "/" + account + "/" + emailFileName + ".json";
@@ -162,6 +244,8 @@ public class Database {
                 }
 
                 writeEmail(email, account);
+
+                incrementStats(account);
                 if (account.equals(email.getSender()))
                     LogController.emailSent(email.getSender(), email.getRecipients());
                 else
@@ -172,4 +256,37 @@ public class Database {
 
         }
     }
+
+    public void deleteEmail(EmailSerializable email, String account) {
+        File accountsFile = new File(EMAILS_PATH + "/" + account);
+        if (accountsFile.exists()) {
+            String emailFileName = email.getDate().split(" ")[0].replaceAll("/", "-");
+            String emailFilePath = EMAILS_PATH + "/" + account + "/" + emailFileName + ".json";
+
+            try {
+                Reader reader = new FileReader(emailFilePath);
+                Gson g = new GsonBuilder().setPrettyPrinting().create();
+
+                ArrayList<EmailSerializable> emails = g.fromJson(reader, ArrayList.class);
+                reader.close();
+
+                for (EmailSerializable e : emails) {
+                    if (e.getId() == email.getId()) {
+                        emails.remove(e);
+                        break;
+                    }
+                }
+
+                FileWriter writer = new FileWriter(emailFilePath);
+                writer.write(g.toJson(emails));
+                writer.close();
+
+                decrementStats(account);
+            } catch (Exception e) {
+                System.out.println("ERROR delete: " + e);
+            }
+        }
+
+    }
+
 }

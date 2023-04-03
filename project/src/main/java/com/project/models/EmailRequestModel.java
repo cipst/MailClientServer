@@ -4,8 +4,11 @@ public class EmailRequestModel implements java.io.Serializable {
     public enum RequestType {
         SEND,
         DELETE_FROM_INBOX,
+        FILL_INBOX,
         DELETE_FROM_OUTBOX
-    };
+    }
+
+    ;
 
     private final String requestingAddress;
     private final RequestType requestType;
@@ -15,6 +18,12 @@ public class EmailRequestModel implements java.io.Serializable {
         this.requestingAddress = requestingAddress;
         this.requestType = requestType;
         this.email = email;
+    }
+
+    public EmailRequestModel(String requestingAddress, RequestType requestType) {
+        this.requestingAddress = requestingAddress;
+        this.requestType = requestType;
+        this.email = null;
     }
 
     public String getRequestingAddress() {

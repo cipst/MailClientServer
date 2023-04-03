@@ -129,4 +129,9 @@ public class LogController {
         assert !filePath.equals("");
         write(String.format("Email from %s rejected because of wrong recipients: %s", sender, wrongRecipients));
     }
+
+    public static void emailDeleted(String account) {
+        assert !filePath.equals("");
+        write(String.format("Email deleted from %s", account));
+    }
 }

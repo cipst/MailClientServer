@@ -81,4 +81,9 @@ public class EmailSerializable implements java.io.Serializable {
     public String toString() {
         return String.format("Sender: %s - Recipients: %s - Subject: %s - Message: %s - Date: %s", sender, recipients, subject, message, date);
     }
+
+    public int compareTo(EmailSerializable emailSerializable) {
+        return Integer.compare(this.id, emailSerializable.getId());
+    }
+
 }

@@ -1,7 +1,10 @@
 package com.project.client.controller;
 
 import com.project.client.model.UserModel;
-import com.project.models.*;
+import com.project.models.ConnectionRequestModel;
+import com.project.models.EmailRequestModel;
+import com.project.models.EmailSerializable;
+import com.project.models.ResponseModel;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -13,6 +16,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 
 
 public class ConnectionController {
@@ -51,6 +55,8 @@ public class ConnectionController {
             Object res = inStream.readObject();
             if (res instanceof ResponseModel && ((ResponseModel) res).isSuccessful()) {
                 System.out.println("Connessione al server stabilita");
+                //TODO: fix this
+                emailsInboxContent.addAll((EmailSerializable) ((ResponseModel) res).getData());
                 return true;
             } else {
                 System.out.println("Connessione al server non stabilita");
@@ -129,11 +135,51 @@ public class ConnectionController {
         }
     }
 
-    public static void deleteEmail(EmailSerializable email) {
+    public static boolean deleteEmail(EmailSerializable email) {
+        //TODO: TEST ME PLS
+//        new Alert(Alert.AlertType.INFORMATION, "Email eliminated").showAndWait();
+        UserModel user = UserController.getUser();
+        try {
+            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT);
+            outStream = new ObjectOutputStream(socket.getOutputStream());
+            inStream = new ObjectInputStream(socket.getInputStream());
 
-        emailsInbox.remove(email);
-        //TODO: delete email from server
-        new Alert(Alert.AlertType.INFORMATION, "Email eliminated").showAndWait();
+            EmailRequestModel conn = new EmailRequestModel(user.getAddress(), EmailRequestModel.RequestType.DELETE_FROM_INBOX, email); // Creo l'oggetto da inviare per richiedere la connessione al server
+            outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
+
+            socket.setSoTimeout(2000);
+            Object res = inStream.readObject();
+            if (res instanceof ResponseModel && ((ResponseModel) res).isSuccessful()) {
+//                System.out.println("Connessione al server stabilita");
+                new Alert(Alert.AlertType.INFORMATION, ((ResponseModel) res).getMessage()).showAndWait();
+
+//                emailsInbox.remove(email);
+                return true;
+            } else {
+//                System.out.println("Connessione al server non stabilita");
+                new Alert(Alert.AlertType.ERROR, "Something went wrong").showAndWait();
+                return false;
+            }
+        } catch (IOException e) {
+            new Alert(Alert.AlertType.ERROR, "Connection Error").showAndWait();
+            System.out.println(e.getMessage() + " [threadConnection]");
+//            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Something went wrong\nTry later.").showAndWait();
+            e.printStackTrace();
+            return false;
+        } finally {
+            System.out.println("[" + Thread.currentThread().getName() + "] threadConnection terminato");
+            try {
+                outStream.close();
+                inStream.close();
+                socket.close();
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+//                e.printStackTrace();
+            }
+        }
     }
 
     public static boolean sendEmail(EmailSerializable email) {

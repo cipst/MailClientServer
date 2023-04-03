@@ -1,6 +1,9 @@
 package com.project.server.controller;
 
-import com.project.models.*;
+import com.project.models.ConnectionRequestModel;
+import com.project.models.EmailRequestModel;
+import com.project.models.EmailSerializable;
+import com.project.models.ResponseModel;
 import com.project.server.Database;
 
 import java.io.ObjectInputStream;
@@ -8,17 +11,18 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class ConnectionController {
     private final int LISTENING_PORT = 1234;
     private final Database db;
-    private ArrayList<String> connectedClients;
+    private HashMap<String, Integer> connectedClients;
     private static boolean isServerOn = false;
     private Thread thread;
 
     public ConnectionController(Database db) {
-        connectedClients = new ArrayList<>();
+        connectedClients = new HashMap<>();
         this.db = db;
         thread = new Thread(() -> {
             try {
@@ -42,6 +46,7 @@ public class ConnectionController {
 
     public void stopServer() {
         isServerOn = false;
+        connectedClients.clear();
     }
 
     public static boolean isServerOn() {
@@ -103,23 +108,26 @@ public class ConnectionController {
                 }
 
                 LogController.loginAccepted(email);
-                connectedClients.add(email);
-                return new ResponseModel(true, "Connection successful", null);
+                connectedClients.put(email, -1);
+//                return new ResponseModel(true, "Connection successful", null);
 
                 //TODO: send emails outbox
                 //TODO: send emails inbox
+
+                return fillInbox(email);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
-
         private ResponseModel handleEmailRequest(EmailRequestModel request) {
             switch (request.getRequestType()) {
                 case SEND:
                     return sendEmail(request.getEmail());
+                case FILL_INBOX:
+                    return fillInbox(request.getRequestingAddress());
                 case DELETE_FROM_INBOX:
-//                    return deleteFromInbox(request.getEmail());
+                    return deleteFromInbox(request.getEmail(), request.getRequestingAddress());
                 default:
                     return new ResponseModel(false, "Invalid request", null);
             }
@@ -134,6 +142,49 @@ public class ConnectionController {
                 }
                 db.insertEmail(email);
                 return new ResponseModel(true, "Email sent", null);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private ResponseModel fillInbox(String account) {
+            try {
+                int lastWrittenId = db.readStats(account);
+                int lastInboxId = connectedClients.get(account);
+                ArrayList<Object> inbox = new ArrayList<>();
+
+                if (lastInboxId < lastWrittenId) {
+                    ArrayList<EmailSerializable> emails = db.readAllEmails(account);
+                    System.out.println("emails.size() = " + emails.size());
+                    System.out.println("EMAILS: " + emails);
+                    System.out.println("LAST INBOX ID: " + lastInboxId);
+                    System.out.println("LAST WRITTEN ID: " + lastWrittenId);
+
+//                    emails.sort(EmailSerializable::compareTo);
+//                    System.out.println("EMAIL ????" + emails.get(0));
+//                    emails.removeIf(s -> s.getId() < lastInboxId);
+//                    inbox = emails;
+                    for (int i = lastInboxId + 1; i <= lastWrittenId; i++) {
+                        System.out.println("i = " + i);
+                        System.out.println("emails.get(i) = " + emails.get(i));
+//                        EmailSerializable email = emails.get(i);
+//                        System.out.println("EMAIL: " + email);
+                        Object o = emails.get(i);
+                        inbox.add(o);
+                    }
+                    connectedClients.put(account, lastWrittenId);
+                }
+
+                return new ResponseModel(true, "Inbox filled", inbox);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private ResponseModel deleteFromInbox(EmailSerializable email, String account) {
+            try {
+                db.deleteEmail(email, account);
+                return new ResponseModel(true, "Email deleted", null);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -178,4 +229,5 @@ public class ConnectionController {
         }
 
     }
+
 }
