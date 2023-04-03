@@ -24,7 +24,11 @@ public class ClientGUI extends Application {
         primaryStage.show();
         System.out.println("Login opened");
 
-        primaryStage.setOnCloseRequest(event -> System.out.println("Login closed"));
+        primaryStage.setOnCloseRequest(event -> {
+            System.out.println("Login closed");
+
+            System.exit(0);
+        });
     }
 
     @Override

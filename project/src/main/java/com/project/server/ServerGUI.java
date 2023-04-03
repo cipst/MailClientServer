@@ -2,6 +2,7 @@ package com.project.server;
 
 import com.project.server.controller.ConnectionController;
 import com.project.server.controller.LogController;
+import com.project.server.controller.ServerGUIController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,7 +19,6 @@ public class ServerGUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(ServerGUI.class.getResource("ServerGUI.fxml"));
-
         Scene scene = new Scene(loader.load());
         primaryStage.setTitle("Server");
         primaryStage.setScene(scene);

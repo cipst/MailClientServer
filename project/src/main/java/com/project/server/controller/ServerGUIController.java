@@ -1,18 +1,15 @@
 package com.project.server.controller;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Scanner;
-
-import com.project.models.Email;
 import com.project.server.Database;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.text.Text;
 import org.controlsfx.control.ToggleSwitch;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.Scanner;
 
 public class ServerGUIController {
     @FXML
@@ -31,40 +28,39 @@ public class ServerGUIController {
     public void initialize() {
         connectionController = new ConnectionController(new Database());
 
-        File emailFile = new File(LogController.getLogsPath()+"/");
+        File emailFile = new File(LogController.getLogsPath() + "/");
         File[] files = emailFile.listFiles();
 
         assert files != null;
         for (File file : files)
             logsListView.getItems().add(file.getName());
 
-        thread = new Thread(this::readLogs);
-        thread.start();
+        logsTextArea.textProperty().bind(LogController.currentMessagesLogProperty());
+
+        logsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                System.out.println("Selected item: " + newValue);
+                String selected = logsListView.getSelectionModel().getSelectedItem();
+                readLog(selected);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
     }
 
-    public void readLogs(){
-        try{
-            while (true) {
-                String selected = logsListView.getSelectionModel().getSelectedItem();
-                if (selected != null) {
-                    Scanner in = new Scanner(new FileReader(LogController.getLogsPath() + "/" + selected));
-                    StringBuilder sb = new StringBuilder();
-                    while (in.hasNextLine()) {
-                        sb.append(in.nextLine());
-                        sb.append(System.lineSeparator());
-                    }
-                    Platform.runLater(() -> logsTextArea.setText(sb.toString()));
-                    in.close();
+    public void readLog(String selected) {
+        try {
+            if (selected != null) {
+                Scanner in = new Scanner(new FileReader(LogController.getLogsPath() + "/" + selected));
+                StringBuilder sb = new StringBuilder();
+                while (in.hasNextLine()) {
+                    sb.append(in.nextLine());
+                    sb.append(System.lineSeparator());
                 }
-
-                // Sleep for some time before updating again
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                LogController.setCurrentMessagesLog(sb.toString());
+                in.close();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -79,14 +75,17 @@ public class ServerGUIController {
      */
     @FXML
     public void triggerToggle() {
-        try{
-            if(btnStartStopServer.isSelected()){
+        try {
+            if (btnStartStopServer.isSelected()) {
 
                 connectionController.runServer();
 
                 labelStartStopServer.setText("Stop Server");
                 String fileName = LogController.startServer();
-                logsListView.getItems().add(fileName+".txt");
+
+                System.out.println("FILE NAME: " + fileName);
+
+                logsListView.getItems().add(fileName + ".txt");
 
 
 //                Email e1 = new Email("stefano.cipolletta@unito.it", new ArrayList<String>() {{
@@ -94,7 +93,7 @@ public class ServerGUIController {
 //                }}, "Ciao", "Come stai?", "28/03/2023 16:39");
 //
 //                new Database().insertEmail(e1);
-            }else{
+            } else {
                 labelStartStopServer.setText("Start Server");
                 String fileName = LogController.stopServer("stopped");
                 System.out.println("fileName: " + fileName);
@@ -104,8 +103,9 @@ public class ServerGUIController {
                 connectionController.stopServer();
             }
             logsListView.getSelectionModel().selectLast();
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("ERROR: " + e);
+            e.printStackTrace();
         }
     }
 }

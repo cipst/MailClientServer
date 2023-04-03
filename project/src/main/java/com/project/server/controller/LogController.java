@@ -1,10 +1,15 @@
 package com.project.server.controller;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 import java.io.File;
 import java.io.FileWriter;
+import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class LogController {
 
@@ -12,13 +17,27 @@ public class LogController {
 
     private static String filePath = "";
 
+    private static StringProperty currentMessagesLog = new SimpleStringProperty();
+
+    public static void setCurrentMessagesLog(String currentMessagesLog) {
+        LogController.currentMessagesLog.setValue(currentMessagesLog);
+    }
+
+    public static String getCurrentMessagesLog() {
+        return currentMessagesLog.get();
+    }
+
+    public static StringProperty currentMessagesLogProperty() {
+        return currentMessagesLog;
+    }
+
     public static String getLogsPath() {
         return LOGS_PATH;
     }
 
     private static void createFile(String fileName) {
-        try{
-            filePath = LOGS_PATH+"/"+fileName+".txt";
+        try {
+            filePath = LOGS_PATH + "/" + fileName + ".txt";
             File file = new File(filePath);
 
             if (file.createNewFile())
@@ -26,26 +45,31 @@ public class LogController {
             else
                 System.out.println("File already exists.");
 
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("ERROR: " + e);
         }
     }
 
     private static void write(String log) {
-        try{
+        try {
             FileWriter writer = new FileWriter(filePath, true);
-            writer.write(String.format("%s ---- %s\n", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), log));
+            Date d = new Date();
+            String day = DateFormat.getDateInstance(DateFormat.SHORT).format(d);
+            String time = DateFormat.getTimeInstance(DateFormat.MEDIUM).format(d);
+            String message = String.format("[%s] [%s]: %s\n", day, time, log);
+            currentMessagesLog.setValue(currentMessagesLog.getValueSafe() + "\n" + message);
+            writer.write(message);
             writer.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("ERROR: " + e);
         }
     }
 
-    private static String getFileName(){
+    private static String getFileName() {
         return LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).toString().replace(":", "").replace("-", "");
     }
 
-    public static String startServer(){
+    public static String startServer() {
         String fileName = getFileName();
 
         createFile(fileName);
@@ -53,15 +77,15 @@ public class LogController {
         return fileName;
     }
 
-    public static String stopServer(String reason){
+    public static String stopServer(String reason) {
         assert !filePath.equals("");
         String fileName = getFileName();
         File oldFile = new File(filePath);
 
-        filePath = String.format("%s-%s.txt", filePath.substring(0, filePath.length()-4), fileName);
+        filePath = String.format("%s-%s.txt", filePath.substring(0, filePath.length() - 4), fileName);
         File newFile = new File(filePath);
 
-        if(oldFile.renameTo(newFile)) {
+        if (oldFile.renameTo(newFile)) {
             System.out.println("File renamed to " + newFile.getName());
         } else {
             System.out.println("Failed to rename file");
@@ -71,12 +95,12 @@ public class LogController {
         return newFile.getName();
     }
 
-    public static void emailSent(String by, ArrayList<String> to){
+    public static void emailSent(String by, ArrayList<String> to) {
         assert !filePath.equals("");
         write(String.format("Email sent by %s to %s", by, to));
     }
 
-    public static void emailReceived(String from){
+    public static void emailReceived(String from) {
         assert !filePath.equals("");
         write(String.format("Email received from %s", from));
     }
