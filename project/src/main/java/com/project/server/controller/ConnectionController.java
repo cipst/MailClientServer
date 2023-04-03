@@ -1,8 +1,6 @@
 package com.project.server.controller;
 
-import com.project.models.ConnectionRequestModel;
-import com.project.models.Email;
-import com.project.models.ResponseModel;
+import com.project.models.*;
 import com.project.server.Database;
 
 import java.io.ObjectInputStream;
@@ -62,18 +60,18 @@ public class ConnectionController {
             try {
                 ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
                 ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+                ResponseModel response = null;
 
                 String clientAddress = clientSocket.getInetAddress().getHostAddress();
                 int clientPort = clientSocket.getPort();
 
                 Object obj = in.readObject();
                 if (obj instanceof ConnectionRequestModel request) {
-                    ResponseModel response = handleConnectionRequest(request);
-                    out.writeObject(response);
-                } else if (obj instanceof Email email) {
-                    //TODO: handle email HERE
-                    //handleMailRequest(...);
+                    response = handleConnectionRequest(request);
+                } else if (obj instanceof EmailRequestModel email) {
+                    response = handleEmailRequest(email);
                 }
+                out.writeObject(response);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -113,6 +111,48 @@ public class ConnectionController {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+
+
+        private ResponseModel handleEmailRequest(EmailRequestModel request) {
+            switch (request.getRequestType()) {
+                case SEND:
+                    return sendEmail(request.getEmail());
+                case DELETE_FROM_INBOX:
+//                    return deleteFromInbox(request.getEmail());
+                default:
+                    return new ResponseModel(false, "Invalid request", null);
+            }
+        }
+
+        private ResponseModel sendEmail(EmailSerializable email) {
+            try {
+                ArrayList<String> wrongRecipients = checkRecipients(email);
+                if (wrongRecipients.size() > 0) {
+                    LogController.emailRejected(email.getSender(), wrongRecipients);
+                    return new ResponseModel(false, "Wrong recipients", wrongRecipients);
+                }
+                db.insertEmail(email);
+                LogController.emailSent(email.getSender(), (ArrayList<String>) email.getRecipients());
+                return new ResponseModel(true, "Email sent", null);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private ArrayList<String> checkRecipients(EmailSerializable email) {
+            boolean currentRecipientExists;
+            ArrayList<String> wrongRecipients = new ArrayList<>();
+
+            // check all recipients must be valid
+            for (String recipient : email.getRecipients()) {
+                currentRecipientExists = db.userExist(recipient);
+                if (!currentRecipientExists) {
+                    wrongRecipients.add(recipient);
+                }
+            }
+
+            return wrongRecipients;
         }
 
         public Socket clientSocket() {

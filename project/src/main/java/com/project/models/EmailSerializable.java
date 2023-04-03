@@ -21,6 +21,14 @@ public class EmailSerializable implements java.io.Serializable {
         this.date = date;
     }
 
+    public EmailSerializable(String sender, ArrayList<String> recipients, String subject, String message, String date) {
+        this.sender = sender;
+        this.recipients = recipients;
+        this.subject = subject;
+        this.message = message;
+        this.date = date;
+    }
+
     public int getId() {
         return id;
     }
@@ -47,6 +55,26 @@ public class EmailSerializable implements java.io.Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public void setRecipients(ArrayList<String> recipients) {
+        this.recipients = recipients;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     @Override

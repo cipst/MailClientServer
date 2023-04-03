@@ -124,4 +124,9 @@ public class LogController {
         assert !filePath.equals("");
         write(String.format("%s: %s", reason, address));
     }
+
+    public static void emailRejected(String sender, ArrayList<String> wrongRecipients) {
+        assert !filePath.equals("");
+        write(String.format("Email from %s rejected because of wrong recipients: %s", sender, wrongRecipients));
+    }
 }

@@ -1,7 +1,5 @@
 package com.project.models;
 
-import com.project.models.Email;
-
 public class EmailRequestModel implements java.io.Serializable {
     public enum RequestType {
         SEND,
@@ -11,9 +9,9 @@ public class EmailRequestModel implements java.io.Serializable {
 
     private final String requestingAddress;
     private final RequestType requestType;
-    private final Email email;
+    private final EmailSerializable email;
 
-    public EmailRequestModel(String requestingAddress, RequestType requestType, Email email) {
+    public EmailRequestModel(String requestingAddress, RequestType requestType, EmailSerializable email) {
         this.requestingAddress = requestingAddress;
         this.requestType = requestType;
         this.email = email;
@@ -27,7 +25,7 @@ public class EmailRequestModel implements java.io.Serializable {
         return requestType;
     }
 
-    public Email getEmail() {
+    public EmailSerializable getEmail() {
         return email;
     }
 

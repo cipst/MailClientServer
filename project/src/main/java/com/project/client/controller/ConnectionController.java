@@ -1,9 +1,7 @@
 package com.project.client.controller;
 
 import com.project.client.model.UserModel;
-import com.project.models.ConnectionRequestModel;
-import com.project.models.Email;
-import com.project.models.ResponseModel;
+import com.project.models.*;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -20,8 +18,8 @@ import java.net.Socket;
 public class ConnectionController {
 
     private static final int CONNECTION_PORT = 1234;
-    private static ListProperty<Email> emailsInbox = new SimpleListProperty<>();
-    private static ObservableList<Email> emailsInboxContent = FXCollections.observableArrayList();
+    private static ListProperty<EmailSerializable> emailsInbox = new SimpleListProperty<>();
+    private static ObservableList<EmailSerializable> emailsInboxContent = FXCollections.observableArrayList();
     private static Socket socket;
     private static ObjectOutputStream outStream;
     private static ObjectInputStream inStream;
@@ -32,7 +30,7 @@ public class ConnectionController {
 //        fillInbox();
     }
 
-    public static ListProperty<Email> emailsInboxProperty() {
+    public static ListProperty<EmailSerializable> emailsInboxProperty() {
         return emailsInbox;
     }
 
@@ -131,17 +129,56 @@ public class ConnectionController {
         }
     }
 
-    public static void deleteEmail(Email email) {
+    public static void deleteEmail(EmailSerializable email) {
 
         emailsInbox.remove(email);
         //TODO: delete email from server
         new Alert(Alert.AlertType.INFORMATION, "Email eliminated").showAndWait();
     }
 
-    public static void sendEmail(Email email) {
+    public static boolean sendEmail(EmailSerializable email) {
+        UserModel user = UserController.getUser();
 
-        //TODO: send email to server
-        new Alert(Alert.AlertType.INFORMATION, String.format("Email sended\nFrom:%s\nTo:%s\nSubject:%s\nMessage:%s\n", email.getSender(), email.getRecipients().get(0), email.getSubject(), email.getMessage())).showAndWait();
-        emailsInboxContent.add(email);
+        try {
+            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT);
+            outStream = new ObjectOutputStream(socket.getOutputStream());
+            inStream = new ObjectInputStream(socket.getInputStream());
+
+            EmailRequestModel conn = new EmailRequestModel(user.getAddress(), EmailRequestModel.RequestType.SEND, email); // Creo l'oggetto da inviare per richiedere la connessione al server
+            outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
+
+            socket.setSoTimeout(2000);
+            Object res = inStream.readObject();
+            if (res instanceof ResponseModel && ((ResponseModel) res).isSuccessful()) {
+//                System.out.println("Connessione al server stabilita");
+                new Alert(Alert.AlertType.INFORMATION, String.format("Email sended\nFrom:%s\nTo:%s\nSubject:%s\nMessage:%s\n", email.getSender(), email.getRecipients().get(0), email.getSubject(), email.getMessage())).showAndWait();
+                return true;
+            } else {
+//                System.out.println("Connessione al server non stabilita");
+                new Alert(Alert.AlertType.ERROR, "Something went wrong").showAndWait();
+                return false;
+            }
+        } catch (IOException e) {
+            new Alert(Alert.AlertType.ERROR, "Connection Error").showAndWait();
+            System.out.println(e.getMessage() + " [threadConnection]");
+//            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Something went wrong\nTry later.").showAndWait();
+            e.printStackTrace();
+            return false;
+        } finally {
+            System.out.println("[" + Thread.currentThread().getName() + "] threadConnection terminato");
+            try {
+                outStream.close();
+                inStream.close();
+                socket.close();
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+//                e.printStackTrace();
+            }
+        }
+//
+//        emailsInboxContent.add(email);
     }
 }

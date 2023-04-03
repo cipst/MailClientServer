@@ -1,36 +1,34 @@
 package com.project.client.model;
 
-import java.util.ArrayList;
-
-import com.project.models.Email;
-import com.project.models.EmailConverter;
 import com.project.models.EmailSerializable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
+
 public class ClientModel {
     private StringProperty email;
-    private ObservableList<Email> listOfMessages;
-    private Email selectedMail;
+    private ObservableList<EmailSerializable> listOfMessages;
+    private EmailSerializable selectedMail;
 
     public ClientModel(String email) {
         this.email = new SimpleStringProperty();
         this.email.setValue(email);
         listOfMessages = FXCollections.observableArrayList();
-        selectedMail = new Email("", new ArrayList<>(), "", "", "");
+        selectedMail = new EmailSerializable(-1, "", new ArrayList<>(), "", "", "");
     }
 
     public StringProperty getEmail() {
         return email;
     }
 
-    public ObservableList<Email> getListOfMessages() {
+    public ObservableList<EmailSerializable> getListOfMessages() {
         return listOfMessages;
     }
 
-    public Email getSelectedMail() {
+    public EmailSerializable getSelectedMail() {
         return selectedMail;
     }
 
@@ -51,7 +49,7 @@ public class ClientModel {
      *
      * @param newSelection is the mail currently selected
      */
-    public void setSelectedMail(Email newSelection) {
+    public void setSelectedMail(EmailSerializable newSelection) {
         selectedMail.setId(newSelection.getId());
         selectedMail.setSender(newSelection.getSender());
         selectedMail.setRecipients(newSelection.getRecipients());
@@ -61,21 +59,12 @@ public class ClientModel {
     }
 
     /**
-     * Adds a new received Mail from the Server to the Client list of Mails
-     *
-     * @param newMail is the new Mail received
-     */
-    public void addNewMail(Email newMail) {
-        listOfMessages.add(newMail);
-    }
-
-    /**
      * It converts the received MailSerializable into Mail and adds it to the Client list of Mails
      *
      * @param newMail is the new MailSerializable received
      */
     public void addNewMail(EmailSerializable newMail) {
-        listOfMessages.add(0, EmailConverter.toMail(newMail));
+        listOfMessages.add(0, newMail);
     }
 
 }

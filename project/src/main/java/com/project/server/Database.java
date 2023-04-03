@@ -1,14 +1,16 @@
 package com.project.server;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
-import com.google.gson.GsonBuilder;
-import com.project.models.Email;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.project.models.EmailSerializable;
 import com.project.server.controller.LogController;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Database {
 
@@ -82,7 +84,7 @@ public class Database {
         return areValid;
     }
 
-    private void writeEmail(Email email, String to) {
+    private void writeEmail(EmailSerializable email, String to) {
         String emailFileName = email.getDate().split(" ")[0];
         String emailFilePath = EMAILS_PATH + "/" + to + "/" + emailFileName + ".json";
 
@@ -90,7 +92,7 @@ public class Database {
             Reader reader = new FileReader(emailFilePath);
             Gson g = new GsonBuilder().setPrettyPrinting().create();
 
-            ArrayList<Email> emails = g.fromJson(reader, ArrayList.class);
+            ArrayList<EmailSerializable> emails = g.fromJson(reader, ArrayList.class);
             emails.add(email);
             reader.close();
 
@@ -102,9 +104,9 @@ public class Database {
         }
     }
 
-    private ArrayList<Email> readEmailsByDate(String to, String date) {
+    private ArrayList<EmailSerializable> readEmailsByDate(String to, String date) {
         String emailFilePath = EMAILS_PATH + "/" + to + "/" + date + ".json";
-        ArrayList<Email> emails = null;
+        ArrayList<EmailSerializable> emails = null;
 
         try {
             Reader reader = new FileReader(emailFilePath);
@@ -119,9 +121,9 @@ public class Database {
         return emails;
     }
 
-    public HashMap<String, ArrayList<Email>> readAllEmails(String to) {
+    public HashMap<String, ArrayList<EmailSerializable>> readAllEmails(String to) {
         String emailFilePath = EMAILS_PATH + "/" + to + "/";
-        HashMap<String, ArrayList<Email>> emails = new HashMap<>();
+        HashMap<String, ArrayList<EmailSerializable>> emails = new HashMap<>();
 
         try {
             File emailFile = new File(emailFilePath);
@@ -139,27 +141,11 @@ public class Database {
         return emails;
     }
 
-    public void insertEmail(Email email) {
-        boolean allRecipientsExists = true;
-        boolean currentRecipientExists;
-        ArrayList<String> wrongRecipients = new ArrayList<>();
-
-        // check all recipients must be valid
-        for (String recipient : email.getRecipients()) {
-            currentRecipientExists = userExist(recipient);
-            if (!currentRecipientExists) {
-                wrongRecipients.add(recipient);
-            }
-
-            allRecipientsExists &= currentRecipientExists;
-        }
-
-        if (!allRecipientsExists) throw new Error("One or more recipients doesn't exist: " + wrongRecipients);
-
+    public void insertEmail(EmailSerializable email) {
         try {
             // make a copy of the recipients list and add the sender to save the email in his outbox
             ArrayList<String> accounts = new ArrayList<>(email.getRecipients());
-            accounts.add(0,email.getSender());
+            accounts.add(0, email.getSender());
 
             for (String account : accounts) {
                 File accountsFile = new File(EMAILS_PATH + "/" + account);
@@ -176,7 +162,7 @@ public class Database {
                 }
 
                 writeEmail(email, account);
-                if(account.equals(email.getSender()))
+                if (account.equals(email.getSender()))
                     LogController.emailSent(email.getSender(), (ArrayList<String>) email.getRecipients());
                 else
                     LogController.emailReceived(account);

@@ -1,7 +1,7 @@
 package com.project.client.controller;
 
 import com.project.client.ClientGUI;
-import com.project.models.Email;
+import com.project.models.EmailSerializable;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -33,7 +33,7 @@ public class ClientGUIController {
     @FXML
     public Button btnNewEmail;
     @FXML
-    public ListView<Email> listViewEmails;
+    public ListView<EmailSerializable> listViewEmails;
     @FXML
     public Label sender;
     @FXML
@@ -46,7 +46,7 @@ public class ClientGUIController {
     public WebView webViewEmail;
 
     private static Actions action;
-    private static Email selectedEmail;
+    private static EmailSerializable selectedEmail;
 
     public void initialize() {
         System.out.println("ClientGUIController initialized");
@@ -66,10 +66,10 @@ public class ClientGUIController {
          */
         listViewEmails.setCellFactory(new Callback<>() {
             @Override
-            public ListCell<Email> call(ListView<Email> param) {
+            public ListCell<EmailSerializable> call(ListView<EmailSerializable> param) {
                 return new ListCell<>() {
                     @Override
-                    protected void updateItem(Email item, boolean empty) {
+                    protected void updateItem(EmailSerializable item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item != null) {
                             setText(item.getSubject());
@@ -200,11 +200,11 @@ public class ClientGUIController {
         return action;
     }
 
-    public static Email getSelectedEmail() {
+    public static EmailSerializable getSelectedEmail() {
         return selectedEmail;
     }
 
-    public static void setSelectedEmail(Email selectedEmail) {
+    public static void setSelectedEmail(EmailSerializable selectedEmail) {
         ClientGUIController.selectedEmail = selectedEmail;
     }
 
