@@ -109,10 +109,17 @@ public class LogController {
         assert !filePath.equals("");
         write(String.format("%s is trying to login", address));
     }
+
+    public static void clientDisconnected(String address) {
+        assert !filePath.equals("");
+        write(String.format("%s has disconnected", address));
+    }
+
     public static void loginAccepted(String address) {
         assert !filePath.equals("");
         write(String.format("%s has successfully logged in", address));
     }
+
     public static void loginDenied(String address, String reason) {
         assert !filePath.equals("");
         write(String.format("%s: %s", reason, address));

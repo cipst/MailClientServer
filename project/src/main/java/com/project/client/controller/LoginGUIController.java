@@ -5,6 +5,7 @@ import com.project.client.model.UserModel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -28,6 +29,11 @@ public class LoginGUIController {
     @FXML
     private void login() {
         try {
+            if (emailAddressField.getText().equals("") || passwordField.getText().equals("")) {
+                new Alert(Alert.AlertType.ERROR, "Please fill in all fields").showAndWait();
+                return;
+            }
+
             UserController.setUser(new UserModel(emailAddressField.getText(), passwordField.getText()));
 
             boolean success = ConnectionController.startConnection();
@@ -43,7 +49,11 @@ public class LoginGUIController {
                 stage.show();
                 System.out.println("Client GUI opened");
 
-                stage.setOnCloseRequest(event -> System.out.println("Login closed"));
+                stage.setOnCloseRequest(event -> {
+                    System.out.println("Client closed");
+                    ConnectionController.endConnection();
+                    System.exit(0);
+                });
             }
         } catch (IOException e) {
             System.out.println("Error opening Client GUI");

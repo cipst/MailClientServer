@@ -1,5 +1,6 @@
 package com.project.client;
 
+import com.project.client.controller.ConnectionController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -26,7 +27,6 @@ public class ClientGUI extends Application {
 
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("Login closed");
-
             System.exit(0);
         });
     }
