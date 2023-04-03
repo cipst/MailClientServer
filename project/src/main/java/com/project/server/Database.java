@@ -85,7 +85,7 @@ public class Database {
     }
 
     private void writeEmail(EmailSerializable email, String to) {
-        String emailFileName = email.getDate().split(" ")[0];
+        String emailFileName = email.getDate().split(" ")[0].replaceAll("/", "-");
         String emailFilePath = EMAILS_PATH + "/" + to + "/" + emailFileName + ".json";
 
         try {
@@ -151,7 +151,7 @@ public class Database {
                 File accountsFile = new File(EMAILS_PATH + "/" + account);
                 accountsFile.mkdirs();
 
-                String emailFileName = email.getDate().split(" ")[0];
+                String emailFileName = email.getDate().split(" ")[0].replaceAll("/", "-");
                 String emailFilePath = EMAILS_PATH + "/" + account + "/" + emailFileName + ".json";
 
                 File emailFile = new File(emailFilePath);
@@ -163,7 +163,7 @@ public class Database {
 
                 writeEmail(email, account);
                 if (account.equals(email.getSender()))
-                    LogController.emailSent(email.getSender(), (ArrayList<String>) email.getRecipients());
+                    LogController.emailSent(email.getSender(), email.getRecipients());
                 else
                     LogController.emailReceived(account);
             }

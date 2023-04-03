@@ -133,7 +133,6 @@ public class ConnectionController {
                     return new ResponseModel(false, "Wrong recipients", wrongRecipients);
                 }
                 db.insertEmail(email);
-                LogController.emailSent(email.getSender(), (ArrayList<String>) email.getRecipients());
                 return new ResponseModel(true, "Email sent", null);
             } catch (Exception e) {
                 throw new RuntimeException(e);
