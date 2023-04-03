@@ -17,15 +17,15 @@ public class ConnectionController {
     private final Database db;
     private ArrayList<String> connectedClients;
     private static boolean isServerOn = false;
+    private Thread thread;
 
     public ConnectionController(Database db) {
         connectedClients = new ArrayList<>();
         this.db = db;
-        new Thread(() -> {
+        thread = new Thread(() -> {
             try {
                 ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
                 Socket clientSocket = null;
-
                 while (isServerOn) {
                     clientSocket = serverSocket.accept();
                     new Thread(new ClientHandler(clientSocket)).start();
@@ -33,11 +33,13 @@ public class ConnectionController {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }).start();
+        });
     }
 
     public void runServer() {
         isServerOn = true;
+        if (!thread.isAlive())
+            thread.start();
     }
 
     public void stopServer() {
@@ -79,21 +81,24 @@ public class ConnectionController {
 
         private ResponseModel handleConnectionRequest(ConnectionRequestModel request) {
             try {
-                System.out.println("--- Handling connection request");
                 String email = request.getEmail();
                 String password = request.getPassword();
 
+                System.out.println("--- Handling connection request");
+                LogController.loginRequest(email);
+
                 if (!db.userExist(email)) {
-//                    throw new Exception("User not found");
+                    LogController.loginDenied(email, "User not found");
                     return new ResponseModel(false, "User not found", null);
                 }
 
                 if (!db.checkCredentials(email, password)) {
-//                    throw new Exception("Wrong password");
+                    LogController.loginDenied(email, "Wrong password");
                     return new ResponseModel(false, "Wrong password", null);
                 }
-                connectedClients.add(email);
 
+                LogController.loginAccepted(email);
+                connectedClients.add(email);
                 return new ResponseModel(true, "Connection successful", null);
 
                 //TODO: send emails outbox

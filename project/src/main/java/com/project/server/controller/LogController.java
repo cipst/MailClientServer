@@ -57,7 +57,7 @@ public class LogController {
             String day = DateFormat.getDateInstance(DateFormat.SHORT).format(d);
             String time = DateFormat.getTimeInstance(DateFormat.MEDIUM).format(d);
             String message = String.format("[%s] [%s]: %s\n", day, time, log);
-            currentMessagesLog.setValue(currentMessagesLog.getValueSafe() + "\n" + message);
+            currentMessagesLog.setValue(currentMessagesLog.getValueSafe() + message);
             writer.write(message);
             writer.close();
         } catch (Exception e) {
@@ -103,5 +103,18 @@ public class LogController {
     public static void emailReceived(String from) {
         assert !filePath.equals("");
         write(String.format("Email received from %s", from));
+    }
+
+    public static void loginRequest(String address) {
+        assert !filePath.equals("");
+        write(String.format("%s is trying to login", address));
+    }
+    public static void loginAccepted(String address) {
+        assert !filePath.equals("");
+        write(String.format("%s has successfully logged in", address));
+    }
+    public static void loginDenied(String address, String reason) {
+        assert !filePath.equals("");
+        write(String.format("%s: %s", reason, address));
     }
 }
