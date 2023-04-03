@@ -18,12 +18,10 @@ public class ConnectionController {
     private ArrayList<String> connectedClients;
     private static boolean isServerOn = false;
 
-    private Thread thread;
-
     public ConnectionController(Database db) {
         connectedClients = new ArrayList<>();
         this.db = db;
-        thread = new Thread(() -> {
+        new Thread(() -> {
             try {
                 ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
                 Socket clientSocket = null;
@@ -35,16 +33,14 @@ public class ConnectionController {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        });
+        }).start();
     }
 
     public void runServer() {
         isServerOn = true;
-        thread.start();
     }
 
     public void stopServer() {
-        thread.interrupt();
         isServerOn = false;
     }
 
