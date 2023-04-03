@@ -23,14 +23,19 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-application {
-    mainModule = 'com.project'
-    mainClass = 'com.project.client.ClientGUI'
-}
-
 javafx {
     version = '17.0.2'
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.web']
+
+    application {
+        mainModule = 'com.project.client'
+        mainClass = 'com.project.client.ClientGUI'
+    }
+
+    application {
+        mainModule = 'com.project.server'
+        mainClass = 'com.project.server.ServerGUI'
+    }
 }
 
 dependencies {

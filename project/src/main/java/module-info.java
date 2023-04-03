@@ -16,6 +16,7 @@ module com.project {
 
     exports com.project.server;
     exports com.project.server.controller;
+//    exports com.project.server.model;
     exports com.project.client;
     exports com.project.client.controller;
     exports com.project.models;
