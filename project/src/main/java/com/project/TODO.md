@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] Check delete
+- [x] Check delete
 - [ ] Aggiungere in alto a sinistra nome user + immagine + status server
 - [ ] Thread di riconnessione da parte del client
 - [ ] Reply - Reply All - Forward

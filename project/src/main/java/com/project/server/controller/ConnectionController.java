@@ -123,6 +123,7 @@ public class ConnectionController {
                 case FILL_INBOX:
                     return fillInbox(request.getRequestingAddress());
                 case DELETE_FROM_INBOX:
+                    System.out.println("--- Handling delete request");
                     return deleteFromInbox(request.getEmail(), request.getRequestingAddress());
                 default:
                     return new ResponseModel(false, "Invalid request", null);
@@ -167,7 +168,9 @@ public class ConnectionController {
 
         private ResponseModel deleteFromInbox(EmailSerializable email, String account) {
             try {
+                System.out.println("--- Deleting email from inbox");
                 db.deleteEmail(email, account);
+                LogController.emailDeleted(account);
                 return new ResponseModel(true, "Email deleted", null);
             } catch (Exception e) {
                 throw new RuntimeException(e);

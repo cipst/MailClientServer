@@ -91,6 +91,8 @@ public class ClientGUIController {
                 selectedEmail = newValue;
                 sender.setText(newValue.getSender());
 
+                recipients.getItems().clear();
+
                 recipients.setText(newValue.getRecipients().get(0));
                 for (int i = 1; i < newValue.getRecipients().size(); i++) {
                     recipients.getItems().add(new MenuItem(newValue.getRecipients().get(i)));

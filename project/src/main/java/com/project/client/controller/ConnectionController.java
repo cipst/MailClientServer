@@ -154,7 +154,7 @@ public class ConnectionController {
 //                System.out.println("Connessione al server stabilita");
                 new Alert(Alert.AlertType.INFORMATION, ((ResponseModel) res).getMessage()).showAndWait();
 
-//                emailsInbox.remove(email);
+                emailsInbox.remove(email);
                 return true;
             } else {
 //                System.out.println("Connessione al server non stabilita");

@@ -128,8 +128,6 @@ public class Database {
         String emailFilePath = EMAILS_PATH + "/" + address + "/" + date + ".json";
         ArrayList<EmailSerializable> emails = new ArrayList<>();
 
-        System.out.println("PATH" + emailFilePath);
-
         try {
             Reader reader = new FileReader(emailFilePath);
             Gson g = new Gson();
@@ -145,8 +143,6 @@ public class Database {
             System.out.println("ERROR read emails by date: " + e);
             e.printStackTrace();
         }
-
-        System.out.println(emails.get(0));
 
         return emails;
     }
@@ -166,7 +162,6 @@ public class Database {
                     emails.addAll(readEmailsByDate(address, date));
                 }
             }
-            System.out.println("READ ALL EMAILS ----: " + emails.get(0));
         } catch (Exception e) {
             System.out.println("ERROR read all emails: " + e);
         }
@@ -184,7 +179,7 @@ public class Database {
 
             HashMap<String, String> stats = g.fromJson(reader, HashMap.class);
             reader.close();
-            System.out.println("STATS: " + stats);
+
             id = Integer.parseInt(stats.get("emailReceived"));
         } catch (Exception e) {
             System.out.println("ERROR read stats: " + e);
@@ -272,14 +267,23 @@ public class Database {
             String emailFilePath = EMAILS_PATH + "/" + account + "/" + emailFileName + ".json";
 
             try {
+                ArrayList<EmailSerializable> emails = new ArrayList<>();
                 Reader reader = new FileReader(emailFilePath);
                 Gson g = new GsonBuilder().setPrettyPrinting().create();
 
-                ArrayList<EmailSerializable> emails = g.fromJson(reader, ArrayList.class);
+                JsonArray array = JsonParser.parseReader(reader).getAsJsonArray();
                 reader.close();
+
+                // fill emails array with emails from file
+                for (int i = 0; i < array.size(); i++) {
+                    emails.add(g.fromJson(array.get(i), EmailSerializable.class));
+                }
+
+                System.out.println("emails size: " + emails.size());
 
                 for (EmailSerializable e : emails) {
                     if (e.getId() == email.getId()) {
+                        System.out.println("deleting email: " + e.getId());
                         emails.remove(e);
                         break;
                     }
@@ -289,10 +293,12 @@ public class Database {
                 writer.write(g.toJson(emails));
                 writer.close();
 
-                decrementStats(account);
+//                decrementStats(account);
             } catch (Exception e) {
                 System.out.println("ERROR delete: " + e);
             }
+        } else{
+            System.out.println("ERROR delete: account not found");
         }
 
     }
