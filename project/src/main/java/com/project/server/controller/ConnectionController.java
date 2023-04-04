@@ -6,6 +6,7 @@ import com.project.models.EmailSerializable;
 import com.project.models.ResponseModel;
 import com.project.server.Database;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -15,38 +16,69 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class ConnectionController {
-    private final int LISTENING_PORT = 1234;
+    private static final int LISTENING_PORT = 1234;
     private final Database db;
     private HashMap<String, Integer> connectedClients;
     private static boolean isServerOn = false;
     private Thread thread;
+    private static ServerSocket serverSocket;
+    private static final Object lock = new Object();
+
+    static {
+        try {
+            serverSocket = new ServerSocket(LISTENING_PORT);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public ConnectionController(Database db) {
         connectedClients = new HashMap<>();
         this.db = db;
         thread = new Thread(() -> {
             try {
-                ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
                 Socket clientSocket = null;
-                while (isServerOn) {
+                int i = 0;
+                while (true) {
+                    synchronized (lock) {
+                        if (!isServerOn) {
+                            System.out.println("DIO PORCO ANCHE QUI");
+                            lock.wait();
+                            System.out.println("DIO PORCO E QUI");
+                        }
+                    }
+                    System.out.println("DIO PORCO E QUI 2");
+
+                    System.out.println("--- Waiting for client: " + i++);
                     clientSocket = serverSocket.accept();
-                    new Thread(new ClientHandler(clientSocket)).start();
+                    Thread t = new Thread(new ClientHandler(clientSocket));
+                    t.setDaemon(true);
+                    t.start();
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public void runServer() {
-        isServerOn = true;
-        if (!thread.isAlive())
-            thread.start();
+//        if (!thread.isAlive()) {
+        System.out.println("--- Starting server");
+//            thread.start();
+//        }
+        synchronized (lock) {
+            isServerOn = true;
+            System.out.println("DIO PORCO: " + isServerOn);
+            lock.notifyAll();
+        }
     }
 
     public void stopServer() {
         isServerOn = false;
         connectedClients.clear();
+        System.out.println("--- Stopping server");
     }
 
     public static boolean isServerOn() {
@@ -62,13 +94,12 @@ public class ConnectionController {
 
         @Override
         public void run() {
+            ObjectInputStream in = null;
+            ObjectOutputStream out = null;
             try {
-                ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+                in = new ObjectInputStream(clientSocket.getInputStream());
+                out = new ObjectOutputStream(clientSocket.getOutputStream());
                 ResponseModel response = null;
-
-                String clientAddress = clientSocket.getInetAddress().getHostAddress();
-                int clientPort = clientSocket.getPort();
 
                 Object obj = in.readObject();
                 if (obj instanceof ConnectionRequestModel request) {
@@ -78,12 +109,23 @@ public class ConnectionController {
                 }
                 out.writeObject(response);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                System.out.println("Error: " + e.getMessage());
+            } finally {
+                try {
+                    assert in != null;
+                    assert out != null;
+                    in.close();
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
         private ResponseModel handleConnectionRequest(ConnectionRequestModel request) {
             try {
+                if (!isServerOn) return new ResponseModel(false, "Server is off", null);
+
                 String email = request.getEmail();
                 String password = request.getPassword();
                 ConnectionRequestModel.Status status = request.getStatus();
@@ -112,15 +154,19 @@ public class ConnectionController {
 
                 return fillInbox(email);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                return new ResponseModel(false, "Fail to handle connection request", null);
             }
         }
 
         private ResponseModel handleEmailRequest(EmailRequestModel request) {
+            if (!isServerOn) return new ResponseModel(false, "Server is off", null);
+
             switch (request.getRequestType()) {
                 case SEND:
+                    System.out.println("--- Handling send request");
                     return sendEmail(request.getEmail());
                 case FILL_INBOX:
+                    System.out.println("--- Handling fill inbox request");
                     return fillInbox(request.getRequestingAddress());
                 case DELETE_FROM_INBOX:
                     System.out.println("--- Handling delete request");
@@ -137,10 +183,12 @@ public class ConnectionController {
                     LogController.emailRejected(email.getSender(), wrongRecipients);
                     return new ResponseModel(false, "Wrong recipients", wrongRecipients);
                 }
-                db.insertEmail(email);
-                return new ResponseModel(true, "Email sent", null);
+                if (db.insertEmail(email))
+                    return new ResponseModel(true, "Email sent", null);
+                else
+                    return new ResponseModel(false, "Fail to send the email", null);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                return new ResponseModel(false, "Fail to send the email", null);
             }
         }
 
@@ -162,18 +210,21 @@ public class ConnectionController {
 
                 return new ResponseModel(true, "Inbox filled", inbox);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                return new ResponseModel(false, "Fail to fill the inbox", null);
             }
         }
 
         private ResponseModel deleteFromInbox(EmailSerializable email, String account) {
             try {
-                System.out.println("--- Deleting email from inbox");
-                db.deleteEmail(email, account);
-                LogController.emailDeleted(account);
-                return new ResponseModel(true, "Email deleted", null);
+                if (db.deleteEmail(email, account)) {
+                    LogController.emailDeleted(account);
+                    return new ResponseModel(true, "Email deleted", null);
+                } else {
+                    LogController.failEmailDeleted(account);
+                    return new ResponseModel(false, "Fail to delete the email", null);
+                }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                return new ResponseModel(false, "Fail to delete the email", null);
             }
         }
 

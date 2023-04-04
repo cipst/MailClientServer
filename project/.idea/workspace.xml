@@ -9,8 +9,12 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/TODO.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/TODO.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ClientGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ClientGUIController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ConnectionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ConnectionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/LoginGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/LoginGUIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/NewEmailGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/NewEmailGUIController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/Database.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/controller/LogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/controller/LogController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/project/client/ClientGUI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/project/client/ClientGUI.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -123,8 +127,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.ClientGUI" />
         <item itemvalue="Application.ServerGUI" />
+        <item itemvalue="Application.ClientGUI" />
       </list>
     </recent_temporary>
   </component>
@@ -156,5 +160,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/project$ServerGUI.ic" NAME="ServerGUI Coverage Results" MODIFIED="1680616329423" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.project.server.*</FILTER>
+    </SUITE>
   </component>
 </project>

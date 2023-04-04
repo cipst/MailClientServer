@@ -1,12 +1,15 @@
 package com.project.client.controller;
 
 import com.project.client.ClientGUI;
+import com.project.client.model.UserModel;
 import com.project.models.EmailSerializable;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -44,20 +47,44 @@ public class ClientGUIController {
     public Label date;
     @FXML
     public WebView webViewEmail;
+    @FXML
+    public Label userData;
+    @FXML
+    public Circle statusServer;
 
     private static Actions action;
     private static EmailSerializable selectedEmail;
 
+
     public void initialize() {
         System.out.println("ClientGUIController initialized");
+
+        /**
+         * PROPERTY BINDING
+         */
+        listViewEmails.itemsProperty().bind(ConnectionController.emailsInboxProperty());
+        statusServer.fillProperty().bind(ConnectionController.serverStatusProperty());
+
+        /**
+         * Disable buttons until an email is selected
+         */
         btnReply.setDisable(true);
         btnReplyAll.setDisable(true);
         btnForward.setDisable(true);
         btnDelete.setDisable(true);
 
-//        sender.setText(UserController.getUser().getAddress());
+        /**
+         * Set the user data label to the user's first and last name
+         */
+        UserModel user = UserController.getUser();
+        String firstName = user.getAddress().split("\\.")[0];
+        String lastName = user.getAddress().split("\\.")[1];
+        firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
+        lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1).split("@")[0];
+        userData.setText(firstName + " " + lastName);
 
-        listViewEmails.itemsProperty().bind(ConnectionController.emailsInboxProperty());
+//        lblServerStatus.setText("Server ON");
+//        statusServer.setFill(Color.LAWNGREEN);
 
         /**
          * Set the cell factory for the list view
@@ -105,6 +132,8 @@ public class ClientGUIController {
                 System.out.println(e.getMessage());
             }
         });
+
+        ConnectionController.startServiceThread();
     }
 
     private static void launchEmailWindow() throws IOException {
@@ -206,11 +235,4 @@ public class ClientGUIController {
         return selectedEmail;
     }
 
-    public static void setSelectedEmail(EmailSerializable selectedEmail) {
-        ClientGUIController.selectedEmail = selectedEmail;
-    }
-
-    public void showSelectedEmail() {
-//        treeViewEmailsInbox.getSelectionModel().getSelectedItem().getValue();
-    }
 }

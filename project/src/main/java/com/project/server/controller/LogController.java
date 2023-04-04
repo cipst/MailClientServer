@@ -134,4 +134,9 @@ public class LogController {
         assert !filePath.equals("");
         write(String.format("Email deleted from %s", account));
     }
+
+    public static void failEmailDeleted(String account) {
+        assert !filePath.equals("");
+        write(String.format("Failed to delete email from %s", account));
+    }
 }

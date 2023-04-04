@@ -10,8 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class LoginGUIController {
 
     @FXML
@@ -36,32 +34,33 @@ public class LoginGUIController {
 
             UserController.setUser(new UserModel(emailAddressField.getText(), passwordField.getText()));
 
-            if (ConnectionController.startConnection()) {
-                FXMLLoader loader = new FXMLLoader(ClientGUI.class.getResource("ClientGUI.fxml"));
+            ConnectionController.startConnection();
 
-                Scene scene = new Scene(loader.load());
-                Stage stage = (Stage) btnLogin.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(ClientGUI.class.getResource("ClientGUI.fxml"));
 
-                stage.setTitle("Client");
-                stage.setScene(scene);
-                stage.setResizable(false);
-                stage.show();
-                System.out.println("Client GUI opened");
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) btnLogin.getScene().getWindow();
 
-                stage.setOnCloseRequest(event -> {
-                    System.out.println("Client closed");
-                    if (ConnectionController.endConnection()) {
-                        System.out.println("Connection closed");
-                        System.exit(0);
-                    } else {
-                        System.out.println("Error closing connection");
-                        new Alert(Alert.AlertType.ERROR, "Error closing connection").showAndWait();
-                    }
-                });
-            }
-        } catch (IOException e) {
+            stage.setTitle("Client");
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+            System.out.println("Client GUI opened");
+
+            stage.setOnCloseRequest(event -> {
+                System.out.println("Client closed");
+                try {
+                    ConnectionController.endConnection();
+                    System.out.println("Connection closed");
+                    System.exit(0);
+                }catch(Exception e) {
+                    System.out.println("Error closing connection");
+                    new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
+                }
+            });
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
             System.out.println("Error opening Client GUI");
-            e.printStackTrace();
         }
     }
 }

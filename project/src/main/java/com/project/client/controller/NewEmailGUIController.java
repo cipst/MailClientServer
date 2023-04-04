@@ -149,14 +149,17 @@ public class NewEmailGUIController {
         }
 
         System.out.println("Send email");
+        try {
+            ConnectionController.sendEmail(new EmailSerializable(lblFrom.getText(), addresses, subjectField.getText(), msgHtml.getHtmlText().replace("contenteditable=\"true\"", "contenteditable=\"false\""),
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
 
-        boolean success = ConnectionController.sendEmail(new EmailSerializable(lblFrom.getText(), addresses, subjectField.getText(), msgHtml.getHtmlText().replace("contenteditable=\"true\"", "contenteditable=\"false\""),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
-
-        if (success) {
             // Close window
             Stage stage = (Stage) btnSend.getScene().getWindow();
             stage.close();
+
+            new Alert(Alert.AlertType.INFORMATION, "Email sent successfully").showAndWait();
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
         }
     }
 }

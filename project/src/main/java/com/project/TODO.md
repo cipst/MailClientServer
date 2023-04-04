@@ -1,8 +1,10 @@
 # TODO
 
 - [x] Check delete
-- [ ] Aggiungere in alto a sinistra nome user + immagine + status server
+- [x] Aggiungere in alto a sinistra nome user + immagine + status server
+- [ ] Aggiungere controlli server ON/OFF in ogni metodo client e server
 - [ ] Thread di riconnessione da parte del client
+- [ ] PLATFORM.RUNLATER per fillInbox
 - [ ] Reply - Reply All - Forward
 - [ ] Sincronizzazione lettura/scrittura su file (magari con i Lock (?))
 - [ ] Revisione dei try/catch (client/server)
