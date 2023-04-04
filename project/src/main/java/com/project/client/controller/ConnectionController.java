@@ -55,8 +55,8 @@ public class ConnectionController {
             Object res = inStream.readObject();
             if (res instanceof ResponseModel && ((ResponseModel) res).isSuccessful()) {
                 System.out.println("Connessione al server stabilita");
-                //TODO: fix this
-                emailsInboxContent.addAll((EmailSerializable) ((ResponseModel) res).getData());
+
+                emailsInboxContent.addAll((ArrayList<EmailSerializable>) ((ResponseModel) res).getData());
                 return true;
             } else {
                 System.out.println("Connessione al server non stabilita");
@@ -69,6 +69,7 @@ public class ConnectionController {
 //            e.printStackTrace();
             return false;
         } catch (Exception e) {
+            e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Something went wrong\nTry later.").showAndWait();
             return false;
         } finally {

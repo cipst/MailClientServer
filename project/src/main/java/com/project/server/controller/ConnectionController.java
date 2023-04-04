@@ -109,10 +109,6 @@ public class ConnectionController {
 
                 LogController.loginAccepted(email);
                 connectedClients.put(email, -1);
-//                return new ResponseModel(true, "Connection successful", null);
-
-                //TODO: send emails outbox
-                //TODO: send emails inbox
 
                 return fillInbox(email);
             } catch (Exception e) {
@@ -151,27 +147,15 @@ public class ConnectionController {
             try {
                 int lastWrittenId = db.readStats(account);
                 int lastInboxId = connectedClients.get(account);
-                ArrayList<Object> inbox = new ArrayList<>();
+                ArrayList<EmailSerializable> inbox = new ArrayList<>();
 
                 if (lastInboxId < lastWrittenId) {
                     ArrayList<EmailSerializable> emails = db.readAllEmails(account);
-                    System.out.println("emails.size() = " + emails.size());
-                    System.out.println("EMAILS: " + emails);
-                    System.out.println("LAST INBOX ID: " + lastInboxId);
-                    System.out.println("LAST WRITTEN ID: " + lastWrittenId);
 
-//                    emails.sort(EmailSerializable::compareTo);
-//                    System.out.println("EMAIL ????" + emails.get(0));
-//                    emails.removeIf(s -> s.getId() < lastInboxId);
-//                    inbox = emails;
-                    for (int i = lastInboxId + 1; i <= lastWrittenId; i++) {
-                        System.out.println("i = " + i);
-                        System.out.println("emails.get(i) = " + emails.get(i));
-//                        EmailSerializable email = emails.get(i);
-//                        System.out.println("EMAIL: " + email);
-                        Object o = emails.get(i);
-                        inbox.add(o);
-                    }
+                    emails.sort(EmailSerializable::compareTo);
+                    emails.removeIf(s -> s.getId() < lastInboxId);
+
+                    inbox = emails;
                     connectedClients.put(account, lastWrittenId);
                 }
 

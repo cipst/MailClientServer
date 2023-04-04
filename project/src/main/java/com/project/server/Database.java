@@ -2,6 +2,8 @@ package com.project.server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import com.project.models.EmailSerializable;
 import com.project.server.controller.LogController;
 
@@ -132,10 +134,16 @@ public class Database {
             Reader reader = new FileReader(emailFilePath);
             Gson g = new Gson();
 
-            emails = g.fromJson(reader, ArrayList.class);
+            JsonArray array = JsonParser.parseReader(reader).getAsJsonArray();
             reader.close();
+
+            for (int i = 0; i < array.size(); i++) {
+                emails.add(g.fromJson(array.get(i), EmailSerializable.class));
+            }
+
         } catch (Exception e) {
             System.out.println("ERROR read emails by date: " + e);
+            e.printStackTrace();
         }
 
         System.out.println(emails.get(0));
