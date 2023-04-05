@@ -3,6 +3,7 @@ package com.project.client.controller;
 import com.project.client.ClientGUI;
 import com.project.client.model.UserModel;
 import com.project.models.EmailSerializable;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -81,9 +82,6 @@ public class ClientGUIController {
         firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
         lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1).split("@")[0];
         userData.setText(firstName + " " + lastName);
-
-//        lblServerStatus.setText("Server ON");
-//        statusServer.setFill(Color.LAWNGREEN);
 
         /**
          * Set the cell factory for the list view

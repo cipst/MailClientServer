@@ -13,29 +13,40 @@ import java.io.FileWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Database {
 
     private final String DATABASE_PATH = "src/main/resources/com/project/server/database.json";
     private final String EMAILS_PATH = "src/main/resources/com/project/server/emails";
 
+    private HashMap<String, ReentrantReadWriteLock> emailLocks;
+    private HashMap<String, ReentrantReadWriteLock> statsLock;
+
     public Database() {
-        onLoad();
+        emailLocks = new HashMap<>();
+        statsLock = new HashMap<>();
+        HashMap<String, String> accounts = new HashMap<>();
+
+        accounts.put("stefano.cipolletta@unito.it", "stefano.cipolletta");
+        accounts.put("matteo.barone@unito.it", "matteo.barone");
+        accounts.put("alessio.rosa@unito.it", "alessio.rosa");
+
+        for (String email : accounts.keySet()) {
+            emailLocks.put(email, new ReentrantReadWriteLock());
+            statsLock.put(email, new ReentrantReadWriteLock());
+        }
+
+        onLoad(accounts);
     }
 
-    private void onLoad() {
+    private void onLoad(HashMap<String, String> accounts) {
         try {
             File file = new File(DATABASE_PATH);
             if (file.createNewFile())
                 System.out.println("File created: " + file.getName());
             else
                 System.out.println("File already exists.");
-
-            HashMap<String, String> accounts = new HashMap<>(3);
-
-            accounts.put("stefano.cipolletta@unito.it", "stefano.cipolletta");
-            accounts.put("matteo.barone@unito.it", "matteo.barone");
-            accounts.put("alessio.rosa@unito.it", "alessio.rosa");
 
             Gson g = new GsonBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(DATABASE_PATH);
@@ -103,25 +114,35 @@ public class Database {
         return areValid;
     }
 
-    private boolean writeEmail(EmailSerializable email, String to) {
+    private boolean writeEmail(EmailSerializable email, String address) {
         String emailFileName = email.getDate().split(" ")[0].replaceAll("/", "-");
-        String emailFilePath = EMAILS_PATH + "/" + to + "/" + emailFileName + ".json";
+        String emailFilePath = EMAILS_PATH + "/" + address + "/" + emailFileName + ".json";
         boolean isOperationSuccessful;
 
         try {
             Reader reader = new FileReader(emailFilePath);
             Gson g = new GsonBuilder().setPrettyPrinting().create();
 
+            emailLocks.get(address).readLock().lock();
             ArrayList<EmailSerializable> emails = g.fromJson(reader, ArrayList.class);
             isOperationSuccessful = emails.add(email);
             reader.close();
+            emailLocks.get(address).readLock().unlock();
 
+            emailLocks.get(address).writeLock().lock();
             FileWriter writer = new FileWriter(emailFilePath);
             writer.write(g.toJson(emails));
             writer.close();
+            emailLocks.get(address).writeLock().unlock();
         } catch (Exception e) {
             System.out.println("ERROR write: " + e);
             isOperationSuccessful = false;
+        } finally {
+            if (emailLocks.get(address).isWriteLocked())
+                emailLocks.get(address).writeLock().unlock();
+
+            if (emailLocks.get(address).getReadLockCount() != 0)
+                emailLocks.get(address).readLock().unlock();
         }
 
         return isOperationSuccessful;
@@ -135,8 +156,10 @@ public class Database {
             Reader reader = new FileReader(emailFilePath);
             Gson g = new Gson();
 
+            emailLocks.get(address).readLock().lock();
             JsonArray array = JsonParser.parseReader(reader).getAsJsonArray();
             reader.close();
+            emailLocks.get(address).readLock().unlock();
 
             for (int i = 0; i < array.size(); i++) {
                 emails.add(g.fromJson(array.get(i), EmailSerializable.class));
@@ -145,6 +168,9 @@ public class Database {
         } catch (Exception e) {
             System.out.println("ERROR read emails by date: " + e);
             e.printStackTrace();
+        } finally {
+            if (emailLocks.get(address).getReadLockCount() != 0)
+                emailLocks.get(address).readLock().unlock();
         }
 
         return emails;
@@ -180,12 +206,17 @@ public class Database {
             Reader reader = new FileReader(statsPath);
             Gson g = new Gson();
 
+            statsLock.get(address).readLock().lock();
             HashMap<String, String> stats = g.fromJson(reader, HashMap.class);
             reader.close();
+            statsLock.get(address).readLock().unlock();
 
             id = Integer.parseInt(stats.get("emailReceived"));
         } catch (Exception e) {
             System.out.println("ERROR read stats: " + e);
+        } finally {
+            if (statsLock.get(address).getReadLockCount() != 0)
+                statsLock.get(address).readLock().unlock();
         }
 
         return id;
@@ -199,17 +230,27 @@ public class Database {
             Reader reader = new FileReader(statsPath);
             Gson g = new GsonBuilder().setPrettyPrinting().create();
 
+            statsLock.get(account).readLock().lock();
             HashMap<String, String> stats = g.fromJson(reader, HashMap.class);
             reader.close();
+            statsLock.get(account).readLock().unlock();
 
             stats.put("emailReceived", String.valueOf(Integer.parseInt(stats.get("emailReceived")) + 1));
 
+            statsLock.get(account).writeLock().lock();
             FileWriter writer = new FileWriter(statsPath);
             writer.write(g.toJson(stats));
             writer.close();
+            statsLock.get(account).writeLock().unlock();
         } catch (Exception e) {
             System.out.println("ERROR updateStats: " + e);
             isOperationSuccessful = false;
+        } finally {
+            if (statsLock.get(account).isWriteLocked())
+                statsLock.get(account).writeLock().unlock();
+
+            if (statsLock.get(account).getReadLockCount() != 0)
+                statsLock.get(account).readLock().unlock();
         }
 
         return isOperationSuccessful;

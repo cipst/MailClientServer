@@ -22,8 +22,6 @@ public class ServerGUIController {
     @FXML
     public TextArea logsTextArea;
 
-    private Thread thread;
-
     private ConnectionController connectionController = null;
 
     public void initialize() {

@@ -2,7 +2,6 @@ package com.project.server;
 
 import com.project.server.controller.ConnectionController;
 import com.project.server.controller.LogController;
-import com.project.server.controller.ServerGUIController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,7 +9,7 @@ import javafx.stage.Stage;
 
 public class ServerGUI extends Application {
 
-    Database db = new Database();
+//    Database db = new Database();
 
     public static void main(String[] args) {
         launch(args);

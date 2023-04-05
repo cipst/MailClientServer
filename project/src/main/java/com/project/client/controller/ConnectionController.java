@@ -22,6 +22,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class ConnectionController {
@@ -74,7 +75,7 @@ public class ConnectionController {
                     System.out.println("[startServiceThread] Server is still down: " + e.getMessage());
                 }
             }
-        }, 2, 2, java.util.concurrent.TimeUnit.SECONDS);
+        }, 2, 1, TimeUnit.SECONDS);
     }
 
     private static void changeServerStatus(boolean newStatus) {

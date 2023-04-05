@@ -34,7 +34,6 @@ public class ConnectionController {
         }
     }
 
-
     public ConnectionController(Database db) {
         connectedClients = new HashMap<>();
         this.db = db;
@@ -53,7 +52,7 @@ public class ConnectionController {
                 t.setDaemon(true);
                 t.start();
             } catch (Exception e) {
-                System.out.println("[ConnectionController] Error: " + e.getMessage());
+                System.out.println("[runServer] Error: " + e.getMessage());
             }
         }, 0, 500, TimeUnit.MILLISECONDS);
     }
@@ -81,6 +80,7 @@ public class ConnectionController {
             ObjectInputStream in = null;
             ObjectOutputStream out = null;
             try {
+                clientSocket.setSoTimeout(2000);
                 in = new ObjectInputStream(clientSocket.getInputStream());
                 out = new ObjectOutputStream(clientSocket.getOutputStream());
                 ResponseModel response = null;
@@ -93,7 +93,8 @@ public class ConnectionController {
                 }
                 out.writeObject(response);
             } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
+                System.out.println("[ClientHandler] [run] Error: " + e.getMessage());
+                e.printStackTrace();
             } finally {
                 try {
                     assert in != null;

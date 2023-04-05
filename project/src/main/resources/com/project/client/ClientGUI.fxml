@@ -114,7 +114,7 @@
                 </AnchorPane>
                 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="293.0" prefWidth="479.0" SplitPane.resizableWithParent="false">
                     <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="388.0" prefWidth="605.0" SplitPane.resizableWithParent="false">
-                        <WebView fx:id="webViewEmail" minHeight="-1.0" minWidth="-1.0" prefHeight="388.0" prefWidth="605.0" AnchorPane.bottomAnchor="-95.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-126.0" AnchorPane.topAnchor="0.0" />
+                        <WebView fx:id="webViewEmail" minHeight="-1.0" minWidth="-1.0" prefHeight="388.0" prefWidth="605.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                     </AnchorPane>
                 </AnchorPane>
             </SplitPane>

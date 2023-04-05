@@ -59,13 +59,13 @@ public class LogController {
             Platform.runLater(() -> currentMessagesLog.setValue(currentMessagesLog.getValueSafe() + message));
             writer.write(message);
         } catch (Exception e) {
-            System.out.println("ERROR: " + e);
+            System.out.println("[LogController] [write] Error: " + e.getMessage());
         } finally {
             try {
                 assert writer != null;
                 writer.close();
             } catch (Exception e) {
-                System.out.println("ERROR: " + e);
+                System.out.println("[LogController] [write] Error: " + e.getMessage());
             } finally {
                 lock.writeLock().unlock();
             }
