@@ -10,11 +10,6 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ClientGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ClientGUIController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ConnectionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ConnectionController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/LoginGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/LoginGUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/NewEmailGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/NewEmailGUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/Database.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/controller/LogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/controller/LogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/project/client/ClientGUI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/project/client/ClientGUI.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

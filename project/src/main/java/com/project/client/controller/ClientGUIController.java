@@ -8,7 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -110,7 +109,6 @@ public class ClientGUIController {
 
         listViewEmails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                System.out.println("Selected item: " + newValue);
                 btnReply.setDisable(false);
                 btnReplyAll.setDisable(false);
                 btnForward.setDisable(false);
@@ -129,11 +127,11 @@ public class ClientGUIController {
                 date.setText(newValue.getDate());
                 webViewEmail.getEngine().loadContent(newValue.getMessage());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("[selectedItem] Error: " + e.getMessage());
             }
         });
 
-        ConnectionController.startServiceThread();
+        ConnectionController.startExecutorService();
     }
 
     private static void launchEmailWindow() throws IOException {
@@ -208,6 +206,7 @@ public class ClientGUIController {
             Optional<ButtonType> response = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this email?", ButtonType.YES, ButtonType.NO).showAndWait();
             if (response.isPresent() && response.get() == ButtonType.YES) {
                 ConnectionController.deleteEmail(selectedEmail);
+
                 selectedEmail = null;
                 sender.setText("");
                 recipients.setText("");
@@ -219,11 +218,11 @@ public class ClientGUIController {
                 btnReplyAll.setDisable(true);
                 btnForward.setDisable(true);
                 btnDelete.setDisable(true);
+                new Alert(Alert.AlertType.INFORMATION, "Email deleted").showAndWait();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            System.out.println("[FXML delete] Error: " + e.getMessage());
+            new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
         }
     }
 

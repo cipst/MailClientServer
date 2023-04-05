@@ -53,9 +53,10 @@ public class LoginGUIController {
                     ConnectionController.endConnection();
                     System.out.println("Connection closed");
                     System.exit(0);
-                }catch(Exception e) {
+                } catch (Exception e) {
                     System.out.println("Error closing connection");
-                    new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
+//                    new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
+                    System.exit(0);
                 }
             });
         } catch (Exception e) {
