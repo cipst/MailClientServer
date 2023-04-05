@@ -83,7 +83,7 @@ public class EmailSerializable implements java.io.Serializable {
     }
 
     public int compareTo(EmailSerializable emailSerializable) {
-        return Integer.compare(this.id, emailSerializable.getId());
+        return -this.date.compareTo(emailSerializable.getDate());
     }
 
 }

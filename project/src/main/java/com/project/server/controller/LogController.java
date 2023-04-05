@@ -1,5 +1,6 @@
 package com.project.server.controller;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -10,21 +11,17 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LogController {
 
     private static final String LOGS_PATH = "src/main/resources/com/project/server/logs";
-
     private static String filePath = "";
-
     private static StringProperty currentMessagesLog = new SimpleStringProperty();
+    private static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     public static void setCurrentMessagesLog(String currentMessagesLog) {
         LogController.currentMessagesLog.setValue(currentMessagesLog);
-    }
-
-    public static String getCurrentMessagesLog() {
-        return currentMessagesLog.get();
     }
 
     public static StringProperty currentMessagesLogProperty() {
@@ -51,17 +48,27 @@ public class LogController {
     }
 
     private static void write(String log) {
+        FileWriter writer = null;
         try {
-            FileWriter writer = new FileWriter(filePath, true);
+            lock.writeLock().lock();
+            writer = new FileWriter(filePath, true);
             Date d = new Date();
             String day = DateFormat.getDateInstance(DateFormat.SHORT).format(d);
             String time = DateFormat.getTimeInstance(DateFormat.MEDIUM).format(d);
             String message = String.format("[%s] [%s]: %s\n", day, time, log);
-            currentMessagesLog.setValue(currentMessagesLog.getValueSafe() + message);
+            Platform.runLater(() -> currentMessagesLog.setValue(currentMessagesLog.getValueSafe() + message));
             writer.write(message);
-            writer.close();
         } catch (Exception e) {
             System.out.println("ERROR: " + e);
+        } finally {
+            try {
+                assert writer != null;
+                writer.close();
+            } catch (Exception e) {
+                System.out.println("ERROR: " + e);
+            } finally {
+                lock.writeLock().unlock();
+            }
         }
     }
 

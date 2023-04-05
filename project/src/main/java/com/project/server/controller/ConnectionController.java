@@ -14,15 +14,17 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ConnectionController {
     private static final int LISTENING_PORT = 1234;
     private final Database db;
     private HashMap<String, Integer> connectedClients;
     private static boolean isServerOn = false;
-    private Thread thread;
     private static ServerSocket serverSocket;
-    private static final Object lock = new Object();
+    private static ScheduledExecutorService executor;
 
     static {
         try {
@@ -32,52 +34,34 @@ public class ConnectionController {
         }
     }
 
+
     public ConnectionController(Database db) {
         connectedClients = new HashMap<>();
         this.db = db;
-        thread = new Thread(() -> {
-            try {
-                Socket clientSocket = null;
-                int i = 0;
-                while (true) {
-                    synchronized (lock) {
-                        if (!isServerOn) {
-                            System.out.println("DIO PORCO ANCHE QUI");
-                            lock.wait();
-                            System.out.println("DIO PORCO E QUI");
-                        }
-                    }
-                    System.out.println("DIO PORCO E QUI 2");
-
-                    System.out.println("--- Waiting for client: " + i++);
-                    clientSocket = serverSocket.accept();
-                    Thread t = new Thread(new ClientHandler(clientSocket));
-                    t.setDaemon(true);
-                    t.start();
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
     }
 
     public void runServer() {
-//        if (!thread.isAlive()) {
         System.out.println("--- Starting server");
-//            thread.start();
-//        }
-        synchronized (lock) {
-            isServerOn = true;
-            System.out.println("DIO PORCO: " + isServerOn);
-            lock.notifyAll();
-        }
+        isServerOn = true;
+
+        executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(() -> {
+            try {
+                if (!isServerOn) return;
+                Socket clientSocket = serverSocket.accept();
+                Thread t = new Thread(new ClientHandler(clientSocket));
+                t.setDaemon(true);
+                t.start();
+            } catch (Exception e) {
+                System.out.println("[ConnectionController] Error: " + e.getMessage());
+            }
+        }, 0, 500, TimeUnit.MILLISECONDS);
     }
 
     public void stopServer() {
         isServerOn = false;
         connectedClients.clear();
+        executor.shutdown();
         System.out.println("--- Stopping server");
     }
 
@@ -201,10 +185,10 @@ public class ConnectionController {
                 if (lastInboxId < lastWrittenId) {
                     ArrayList<EmailSerializable> emails = db.readAllEmails(account);
 
-                    emails.sort(EmailSerializable::compareTo);
-                    emails.removeIf(s -> s.getId() < lastInboxId);
+                    emails.removeIf(s -> s.getId() <= lastInboxId);
 
                     inbox = emails;
+                    emails.sort(EmailSerializable::compareTo);
                     connectedClients.put(account, lastWrittenId);
                 }
 
@@ -241,10 +225,6 @@ public class ConnectionController {
             }
 
             return wrongRecipients;
-        }
-
-        public Socket clientSocket() {
-            return clientSocket;
         }
 
         @Override

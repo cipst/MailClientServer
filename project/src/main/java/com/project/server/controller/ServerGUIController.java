@@ -1,6 +1,7 @@
 package com.project.server.controller;
 
 import com.project.server.Database;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
@@ -57,7 +58,11 @@ public class ServerGUIController {
                     sb.append(in.nextLine());
                     sb.append(System.lineSeparator());
                 }
-                LogController.setCurrentMessagesLog(sb.toString());
+
+                Platform.runLater(() -> {
+                    LogController.setCurrentMessagesLog(sb.toString());
+                });
+
                 in.close();
             }
         } catch (Exception e) {
