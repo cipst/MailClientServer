@@ -6,10 +6,7 @@ import com.project.models.EmailRequestModel;
 import com.project.models.EmailSerializable;
 import com.project.models.ResponseModel;
 import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
@@ -31,6 +28,7 @@ public class ConnectionController {
     private static ListProperty<EmailSerializable> emailsInbox = new SimpleListProperty<>();
     private static ObservableList<EmailSerializable> emailsInboxContent = FXCollections.observableArrayList();
     private static ObjectProperty<Color> serverStatus = new SimpleObjectProperty<>(Color.LAWNGREEN);
+    private static BooleanProperty actionsDisabled = new SimpleBooleanProperty(true);
     private static Socket socket;
     private static ObjectOutputStream outStream;
     private static ObjectInputStream inStream;
@@ -71,6 +69,8 @@ public class ConnectionController {
                     ConnectionController.startConnection();
                     System.out.println("Server is up thanks to startConnection call");
                     changeServerStatus(true);
+
+                    ClientGUIController.setSelectedEmail(null);
                 } catch (Exception e) {
                     System.out.println("[startServiceThread] Server is still down: " + e.getMessage());
                 }
@@ -110,6 +110,7 @@ public class ConnectionController {
 
             emailsInboxContent.clear();
             emailsInboxContent.addAll((ArrayList<EmailSerializable>) res.getData());
+            setActionsDisabled(true);
         } catch (IOException e) {
             System.out.println("[startConnection] Connection Error: " + e.getMessage());
             throw new Exception("Connection Error");
@@ -176,7 +177,10 @@ public class ConnectionController {
 
             if (!res.isSuccessful()) throw new Exception(res.getMessage());
 
-            emailsInboxContent.addAll((ArrayList<EmailSerializable>) res.getData());
+            ArrayList<EmailSerializable> emails = (ArrayList<EmailSerializable>) res.getData();
+            if (emails.size() > 0) {
+                emailsInboxContent.addAll(emails);
+            }
         } catch (IOException e) {
             System.out.println("[fillInbox] Connection Error: " + e.getMessage());
             throw new Exception("Connection Error");
@@ -261,4 +265,15 @@ public class ConnectionController {
         }
     }
 
+    public static boolean isActionsDisabled() {
+        return actionsDisabled.get();
+    }
+
+    public static BooleanProperty actionsDisabledProperty() {
+        return actionsDisabled;
+    }
+
+    public static void setActionsDisabled(boolean actionsDisabled) {
+        ConnectionController.actionsDisabled.set(actionsDisabled);
+    }
 }

@@ -4,6 +4,8 @@ import com.project.client.ClientGUI;
 import com.project.client.model.UserModel;
 import com.project.models.EmailSerializable;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -54,25 +56,28 @@ public class ClientGUIController {
 
     private static Actions action;
     private static EmailSerializable selectedEmail;
+    private static ObjectProperty<EmailSerializable> selectedEmailProperty = new SimpleObjectProperty<>();
 
 
     public void initialize() {
         System.out.println("ClientGUIController initialized");
 
+        selectedEmailProperty.set(selectedEmail);
+
         /**
          * PROPERTY BINDING
          */
         listViewEmails.setItems(ConnectionController.emailsInboxProperty());
-//        listViewEmails.itemsProperty().bind(ConnectionController.emailsInboxProperty());
         statusServer.fillProperty().bind(ConnectionController.serverStatusProperty());
 
         /**
          * Disable buttons until an email is selected
          */
-        btnReply.setDisable(true);
-        btnReplyAll.setDisable(true);
-        btnForward.setDisable(true);
-        btnDelete.setDisable(true);
+        btnReply.disableProperty().bind(ConnectionController.actionsDisabledProperty());
+        btnReplyAll.disableProperty().bind(ConnectionController.actionsDisabledProperty());
+        btnForward.disableProperty().bind(ConnectionController.actionsDisabledProperty());
+        btnDelete.disableProperty().bind(ConnectionController.actionsDisabledProperty());
+
 
         /**
          * Set the user data label to the user's first and last name
@@ -108,23 +113,33 @@ public class ClientGUIController {
 
         listViewEmails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                btnReply.setDisable(false);
-                btnReplyAll.setDisable(false);
-                btnForward.setDisable(false);
-                btnDelete.setDisable(false);
+                ConnectionController.setActionsDisabled(false);
+
+                if(newValue == null) {
+                    Platform.runLater(() -> {
+                        sender.setText("");
+                        recipients.setText("");
+                        recipients.getItems().clear();
+                        subject.setText("");
+                        date.setText("");
+                        webViewEmail.getEngine().loadContent("");
+                    });
+                    return;
+                }
+
                 selectedEmail = newValue;
-                sender.setText(newValue.getSender());
+                sender.setText(selectedEmail.getSender());
 
                 recipients.getItems().clear();
 
-                recipients.setText(newValue.getRecipients().get(0));
-                for (int i = 1; i < newValue.getRecipients().size(); i++) {
-                    recipients.getItems().add(new MenuItem(newValue.getRecipients().get(i)));
+                recipients.setText(selectedEmail.getRecipients().get(0));
+                for (int i = 1; i < selectedEmail.getRecipients().size(); i++) {
+                    recipients.getItems().add(new MenuItem(selectedEmail.getRecipients().get(i)));
                 }
 
-                subject.setText(newValue.getSubject());
-                date.setText(newValue.getDate());
-                webViewEmail.getEngine().loadContent(newValue.getMessage());
+                subject.setText(selectedEmail.getSubject());
+                date.setText(selectedEmail.getDate());
+                webViewEmail.getEngine().loadContent(selectedEmail.getMessage());
             } catch (Exception e) {
                 System.out.println("[selectedItem] Error: " + e.getMessage());
             }
@@ -213,10 +228,9 @@ public class ClientGUIController {
                 subject.setText("");
                 date.setText("");
                 webViewEmail.getEngine().loadContent("");
-                btnReply.setDisable(true);
-                btnReplyAll.setDisable(true);
-                btnForward.setDisable(true);
-                btnDelete.setDisable(true);
+
+                ConnectionController.setActionsDisabled(true);
+
                 new Alert(Alert.AlertType.INFORMATION, "Email deleted").showAndWait();
             }
         } catch (Exception e) {
@@ -231,5 +245,9 @@ public class ClientGUIController {
 
     public static EmailSerializable getSelectedEmail() {
         return selectedEmail;
+    }
+
+    public static void setSelectedEmail(EmailSerializable email) {
+        selectedEmail = email;
     }
 }

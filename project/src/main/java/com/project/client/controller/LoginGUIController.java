@@ -61,6 +61,7 @@ public class LoginGUIController {
             });
         } catch (Exception e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
+            e.printStackTrace();
             System.out.println("Error opening Client GUI");
         }
     }
