@@ -26,8 +26,6 @@ public class NewEmailGUIController {
     public HTMLEditor msgHtml;
     @FXML
     public Button btnSend;
-    @FXML
-    private ClientGUIController clientGUIController;
 
     public NewEmailGUIController() {
         this.lblFrom = new Label();
@@ -40,22 +38,35 @@ public class NewEmailGUIController {
     public void initialize() {
         System.out.println("NewEmailGUIController initialized");
         lblFrom.setText(UserController.getUser().getAddress());
-//                toField.setText(ClientGUIController.getTo());
-//                subjectField.setText(ClientGUIController.getSubject());
-//                txtEmail.setHtmlText(ClientGUIController.getTxtEmail());
+
         System.out.println("Action: " + ClientGUIController.getAction());
         switch (ClientGUIController.getAction()) {
             case REPLY:
+                toField.setEditable(false);
+                subjectField.setEditable(true);
+                msgHtml.setDisable(false);
+                toField.setText(ClientGUIController.getSelectedEmail().getSender());
+                break;
+
             case REPLY_ALL:
                 toField.setEditable(false);
                 subjectField.setEditable(true);
                 msgHtml.setDisable(false);
+
+                ArrayList<String> recipients = new ArrayList<>(ClientGUIController.getSelectedEmail().getRecipients());
+                recipients.removeIf(s -> s.equals(UserController.getUser().getAddress()));
+                recipients.add(ClientGUIController.getSelectedEmail().getSender());
+
+                toField.setText(recipients.toString().replace("[", "").replace("]", ""));
                 break;
 
             case FORWARD:
                 toField.setEditable(true);
                 subjectField.setEditable(false);
                 msgHtml.setDisable(true);
+
+                subjectField.setText("Fwd: " + ClientGUIController.getSelectedEmail().getSubject());
+                msgHtml.setHtmlText(ClientGUIController.getSelectedEmail().getMessage());
                 break;
 
             case NEW_EMAIL:
@@ -65,6 +76,7 @@ public class NewEmailGUIController {
                 break;
 
             default:
+                new Alert(Alert.AlertType.ERROR, "Action not found").showAndWait();
                 break;
         }
     }
