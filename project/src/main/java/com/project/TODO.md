@@ -6,10 +6,10 @@
 - [x] Thread di riconnessione da parte del client
 - [x] PLATFORM.RUNLATER per fillInbox
 - [x] Reply - Reply All - Forward
-- [ ] fix fillInbox sorting
-- [?] lock email write/read (**UN PO' SUS**)
-- [ ] notifica nuova mail in inbox
-- [ ] controllo recipients non doppi
+- [x] fix fillInbox sorting
+- [x] lock email write/read (**UN PO' SUS**)
+- [x] notifica nuova mail in inbox
+- [x] controllo recipients non doppi
 - [x] Sincronizzazione lettura/scrittura su file (magari con i Lock (?))
 - [x] Executor Service su server (?)
 - [x] Platform.runlater (?) per i log

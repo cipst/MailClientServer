@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 
 public class NewEmailGUIController {
@@ -153,9 +154,14 @@ public class NewEmailGUIController {
 
         if (toField.getText().contains(",")) {
             String[] ads = toField.getText().split(",");
+
             for (String address : ads) {
                 addresses.add(address.trim());
             }
+
+            addresses = new ArrayList<>(new HashSet<>(addresses));
+
+
         } else {
             addresses.add(toField.getText());
         }
