@@ -5,7 +5,7 @@
 - [x] Aggiungere controlli server ON/OFF in ogni metodo client e server
 - [x] Thread di riconnessione da parte del client
 - [x] PLATFORM.RUNLATER per fillInbox
-- [ ] Reply - Reply All - Forward
+- [x] Reply - Reply All - Forward
 - [ ] fix fillInbox sorting
 - [?] lock email write/read (**UN PO' SUS**)
 - [ ] notifica nuova mail in inbox

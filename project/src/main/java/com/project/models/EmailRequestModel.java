@@ -5,10 +5,7 @@ public class EmailRequestModel implements java.io.Serializable {
         SEND,
         DELETE_FROM_INBOX,
         FILL_INBOX,
-        DELETE_FROM_OUTBOX
     }
-
-    ;
 
     private final String requestingAddress;
     private final RequestType requestType;

@@ -109,7 +109,8 @@ public class ConnectionController {
                 throw new Exception(res.getMessage());
 
             emailsInboxContent.clear();
-            emailsInboxContent.addAll((ArrayList<EmailSerializable>) res.getData());
+            emailsInboxContent.addAll(((ArrayList<EmailSerializable>) res.getData()));
+            emailsInboxContent.sort(EmailSerializable::compareTo);
             setActionsDisabled(true);
         } catch (IOException e) {
             System.out.println("[startConnection] Connection Error: " + e.getMessage());
@@ -179,7 +180,8 @@ public class ConnectionController {
 
             ArrayList<EmailSerializable> emails = (ArrayList<EmailSerializable>) res.getData();
             if (emails.size() > 0) {
-                emailsInboxContent.addAll(emails);
+                emailsInboxContent.addAll(0, emails);
+                emailsInboxContent.sort(EmailSerializable::compareTo);
             }
         } catch (IOException e) {
             System.out.println("[fillInbox] Connection Error: " + e.getMessage());

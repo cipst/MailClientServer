@@ -221,7 +221,7 @@ public class ConnectionController {
                     emails.removeIf(s -> s.getId() <= lastInboxId);
 
                     inbox = emails;
-                    emails.sort(EmailSerializable::compareTo);
+
                     connectedClients.put(account, lastWrittenId);
                 }
 
