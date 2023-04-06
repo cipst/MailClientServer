@@ -5,12 +5,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LogController {
@@ -44,6 +46,33 @@ public class LogController {
 
         } catch (Exception e) {
             System.out.println("ERROR: " + e);
+        }
+    }
+
+    public static void read(String selected) {
+        try {
+            if (selected != null) {
+                Scanner in = new Scanner(new FileReader(getLogsPath() + "/" + selected));
+                StringBuilder sb = new StringBuilder();
+
+                lock.readLock().lock();
+                while (in.hasNextLine()) {
+                    sb.append(in.nextLine());
+                    sb.append(System.lineSeparator());
+                }
+                lock.readLock().unlock();
+
+                Platform.runLater(() -> {
+                    setCurrentMessagesLog(sb.toString());
+                });
+
+                in.close();
+            }
+        } catch (Exception e) {
+            System.out.println("[LogController] [read] Error: " + e.getMessage());
+        } finally {
+            if (lock.getReadLockCount() > 0)
+                lock.readLock().unlock();
         }
     }
 

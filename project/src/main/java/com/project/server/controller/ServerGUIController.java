@@ -40,32 +40,11 @@ public class ServerGUIController {
             try {
                 System.out.println("Selected item: " + newValue);
                 String selected = logsListView.getSelectionModel().getSelectedItem();
-                readLog(selected);
+                LogController.read(selected);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         });
-    }
-
-    public void readLog(String selected) {
-        try {
-            if (selected != null) {
-                Scanner in = new Scanner(new FileReader(LogController.getLogsPath() + "/" + selected));
-                StringBuilder sb = new StringBuilder();
-                while (in.hasNextLine()) {
-                    sb.append(in.nextLine());
-                    sb.append(System.lineSeparator());
-                }
-
-                Platform.runLater(() -> {
-                    LogController.setCurrentMessagesLog(sb.toString());
-                });
-
-                in.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -90,12 +69,6 @@ public class ServerGUIController {
 
                 logsListView.getItems().add(fileName + ".txt");
 
-
-//                Email e1 = new Email("stefano.cipolletta@unito.it", new ArrayList<String>() {{
-//                    add("matteo.barone@unito.it");
-//                }}, "Ciao", "Come stai?", "28/03/2023 16:39");
-//
-//                new Database().insertEmail(e1);
             } else {
                 labelStartStopServer.setText("Start Server");
                 String fileName = LogController.stopServer("stopped");
@@ -110,5 +83,9 @@ public class ServerGUIController {
             System.out.println("ERROR: " + e);
             e.printStackTrace();
         }
+    }
+
+    public void stopServer(){
+        connectionController.stopServer();
     }
 }

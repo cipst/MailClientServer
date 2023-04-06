@@ -2,14 +2,13 @@ package com.project.server;
 
 import com.project.server.controller.ConnectionController;
 import com.project.server.controller.LogController;
+import com.project.server.controller.ServerGUIController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class ServerGUI extends Application {
-
-//    Database db = new Database();
 
     public static void main(String[] args) {
         launch(args);
@@ -27,8 +26,12 @@ public class ServerGUI extends Application {
         primaryStage.setOnCloseRequest(event -> {
             // INSERT HERE CODE TO CLOSE THE SERVER
             System.out.println("Server closed");
-            if(ConnectionController.isServerOn())
+            if (ConnectionController.isServerOn())
                 LogController.stopServer("closed");
+
+            ((ServerGUIController) loader.getController()).stopServer();
+
+            System.exit(0);
         });
     }
 
