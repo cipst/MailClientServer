@@ -3,7 +3,7 @@ package com.project.client.controller;
 import com.project.client.ClientGUI;
 import com.project.client.model.UserModel;
 import com.project.models.EmailSerializable;
-import javafx.beans.binding.Bindings;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -62,7 +62,8 @@ public class ClientGUIController {
         /**
          * PROPERTY BINDING
          */
-        listViewEmails.itemsProperty().bind(ConnectionController.emailsInboxProperty());
+        listViewEmails.setItems(ConnectionController.emailsInboxProperty());
+//        listViewEmails.itemsProperty().bind(ConnectionController.emailsInboxProperty());
         statusServer.fillProperty().bind(ConnectionController.serverStatusProperty());
 
         /**
@@ -96,9 +97,9 @@ public class ClientGUIController {
                     protected void updateItem(EmailSerializable item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item != null) {
-                            setText(item.getSubject());
+                            Platform.runLater(() -> setText(item.getSubject()));
                         } else {
-                            setText("");
+                            Platform.runLater(() -> setText(""));
                         }
                     }
                 };
@@ -231,5 +232,4 @@ public class ClientGUIController {
     public static EmailSerializable getSelectedEmail() {
         return selectedEmail;
     }
-
 }
