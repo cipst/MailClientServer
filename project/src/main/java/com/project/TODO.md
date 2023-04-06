@@ -9,6 +9,7 @@
 - [ ] fix fillInbox sorting
 - [?] lock email write/read (**UN PO' SUS**)
 - [ ] notifica nuova mail in inbox
+- [ ] controllo recipients non doppi
 - [x] Sincronizzazione lettura/scrittura su file (magari con i Lock (?))
 - [x] Executor Service su server (?)
 - [x] Platform.runlater (?) per i log

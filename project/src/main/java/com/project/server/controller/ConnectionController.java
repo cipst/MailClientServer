@@ -14,9 +14,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class ConnectionController {
     private static final int LISTENING_PORT = 1234;
@@ -24,15 +23,8 @@ public class ConnectionController {
     private HashMap<String, Integer> connectedClients;
     private static boolean isServerOn = false;
     private static ServerSocket serverSocket;
-    private static ScheduledExecutorService executor;
-
-    static {
-        try {
-            serverSocket = new ServerSocket(LISTENING_PORT);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private ExecutorService executor;
+    private final Object lock = new Object();
 
     public ConnectionController(Database db) {
         connectedClients = new HashMap<>();
@@ -42,25 +34,57 @@ public class ConnectionController {
     public void runServer() {
         System.out.println("--- Starting server");
         isServerOn = true;
+        try {
+            serverSocket = new ServerSocket(LISTENING_PORT);
+        } catch (Exception e) {
+            System.out.println("[runServer] [serverSocket] Error: " + e.getMessage());
+        }
 
-        executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(() -> {
+        Thread thread = new Thread(() -> {
             try {
-                if (!isServerOn) return;
-                Socket clientSocket = serverSocket.accept();
-                Thread t = new Thread(new ClientHandler(clientSocket));
-                t.setDaemon(true);
-                t.start();
+                Socket clientSocket = null;
+
+                executor = Executors.newFixedThreadPool(10);
+
+                while (true) {
+                    synchronized (lock) {
+                        if (!isServerOn) {
+                            lock.wait();
+                        }
+                    }
+
+                    clientSocket = serverSocket.accept();
+
+//                    Thread t = new Thread(new ClientHandler(clientSocket));
+//                    t.setDaemon(true);
+//                    t.start();
+
+                    executor.execute(new ClientHandler(clientSocket));
+
+                }
             } catch (Exception e) {
-                System.out.println("[runServer] Error: " + e.getMessage());
+                System.out.println("[runServer] [thread] Error: " + e.getMessage());
             }
-        }, 0, 500, TimeUnit.MILLISECONDS);
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public void stopServer() {
         isServerOn = false;
         connectedClients.clear();
+
+        synchronized (lock) {
+            lock.notifyAll();
+        }
+
         executor.shutdown();
+
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            System.out.println("[stopServer] [serverSocket] Error: " + e.getMessage());
+        }
         System.out.println("--- Stopping server");
     }
 
@@ -80,7 +104,9 @@ public class ConnectionController {
             ObjectInputStream in = null;
             ObjectOutputStream out = null;
             try {
-                clientSocket.setSoTimeout(2000);
+                clientSocket.setSoTimeout(1000);
+                clientSocket.setKeepAlive(true);
+
                 in = new ObjectInputStream(clientSocket.getInputStream());
                 out = new ObjectOutputStream(clientSocket.getOutputStream());
                 ResponseModel response = null;
@@ -103,6 +129,12 @@ public class ConnectionController {
                     out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    try {
+                        clientSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
