@@ -7,10 +7,7 @@ import com.google.gson.JsonParser;
 import com.project.models.Email;
 import com.project.server.controller.LogController;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Reader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -26,6 +23,12 @@ public class Database {
     public Database() {
         emailLocks = new HashMap<>();
         statsLock = new HashMap<>();
+        HashMap<String, String> accounts = accountsHashMap();
+
+        onLoad(accounts);
+    }
+
+    private HashMap<String, String> accountsHashMap() {
         HashMap<String, String> accounts = new HashMap<>();
 
         accounts.put("stefano.cipolletta@unito.it", "stefano.cipolletta");
@@ -36,41 +39,45 @@ public class Database {
             emailLocks.put(email, new ReentrantReadWriteLock());
             statsLock.put(email, new ReentrantReadWriteLock());
         }
-
-        onLoad(accounts);
+        return accounts;
     }
 
+    /**
+     * Write the accounts HashMap to the database.json file
+     * @param accounts HashMap with the accounts
+     */
     private void onLoad(HashMap<String, String> accounts) {
         try {
             File file = new File(DATABASE_PATH);
-            if (file.createNewFile())
-                System.out.println("File created: " + file.getName());
-            else
-                System.out.println("File already exists.");
+            if (file.createNewFile()) {
+                Gson g = new GsonBuilder().setPrettyPrinting().create();
+                FileWriter writer = new FileWriter(DATABASE_PATH);
+                writer.write(g.toJson(accounts));
+                writer.close();
 
-            Gson g = new GsonBuilder().setPrettyPrinting().create();
-            FileWriter writer = new FileWriter(DATABASE_PATH);
-            writer.write(g.toJson(accounts));
-            writer.close();
-
-            for (String account : accounts.keySet()) {
-                File accountsFile = new File(EMAILS_PATH + "/" + account);
-                if (accountsFile.mkdirs()) {
-                    String statsPath = EMAILS_PATH + "/" + account + "/" + "stats.json";
-
-                    File stats = new File(statsPath);
-                    stats.createNewFile();
-
-                    HashMap<String, String> counter = new HashMap<>();
-                    counter.put("emailReceived", "-1");
-
-                    FileWriter writerStats = new FileWriter(statsPath);
-                    writerStats.write(g.toJson(counter));
-                    writerStats.close();
-                }
+                initEmailsDirectoriesAndFiles(accounts, g);
             }
         } catch (Exception e) {
             System.out.println("ERROR onLoad: " + e);
+        }
+    }
+
+    private void initEmailsDirectoriesAndFiles(HashMap<String, String> accounts, Gson g) throws IOException {
+        for (String account : accounts.keySet()) {
+            File accountsFile = new File(EMAILS_PATH + "/" + account);
+            if (accountsFile.mkdirs()) {
+                String statsPath = EMAILS_PATH + "/" + account + "/" + "stats.json";
+
+                File stats = new File(statsPath);
+                stats.createNewFile();
+
+                HashMap<String, String> counter = new HashMap<>();
+                counter.put("emailReceived", "-1");
+
+                FileWriter writerStats = new FileWriter(statsPath);
+                writerStats.write(g.toJson(counter));
+                writerStats.close();
+            }
         }
     }
 
@@ -200,7 +207,7 @@ public class Database {
 
     public int readStats(String address) {
         String statsPath = EMAILS_PATH + "/" + address + "/" + "stats.json";
-        int id = 0;
+        int id = -1;
 
         try {
             Reader reader = new FileReader(statsPath);
@@ -318,7 +325,6 @@ public class Database {
                 FileWriter writer = new FileWriter(emailFilePath);
                 writer.write(g.toJson(emails));
                 writer.close();
-
             } catch (Exception e) {
                 System.out.println("ERROR delete: " + e);
                 isOperationSuccessful = false;

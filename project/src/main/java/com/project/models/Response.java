@@ -19,8 +19,8 @@ public class Response implements Serializable {
         this.data = data;
     }
 
-    public Response(boolean success) {
-        this(success, "", null);
+    public Response(boolean success, String message) {
+        this(success, message, null);
     }
 
     public boolean isSuccessful() {

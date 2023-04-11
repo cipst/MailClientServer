@@ -17,6 +17,7 @@ public class ServerGUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(ServerGUI.class.getResource("ServerGUI.fxml"));
+
         Scene scene = new Scene(loader.load());
         primaryStage.setTitle("Server");
         primaryStage.setScene(scene);
@@ -24,7 +25,6 @@ public class ServerGUI extends Application {
         System.out.println("Server opened");
 
         primaryStage.setOnCloseRequest(event -> {
-            // INSERT HERE CODE TO CLOSE THE SERVER
             System.out.println("Server closed");
             if (ConnectionController.isServerOn())
                 LogController.stopServer("closed");

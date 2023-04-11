@@ -15,6 +15,13 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * This class is used to create a log file with the current date and time when the server is started.
+ * It will rename the file with the current date and time when the server is stopped.
+ * The file will be saved in the logs folder.
+ * The file name will be in the format: yyyyMMddTHHmmss-yyyyMMddTHHmmss.txt
+ * It contains a method for each operation that the server performs.
+ */
 public class LogController {
 
     private static final String LOGS_PATH = "src/main/resources/com/project/server/logs";

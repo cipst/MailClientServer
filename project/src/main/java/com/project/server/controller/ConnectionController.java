@@ -20,19 +20,28 @@ import java.util.concurrent.Executors;
 public class ConnectionController {
     private static final int LISTENING_PORT = 1234;
     private final Database db;
-    private HashMap<String, Integer> connectedClients;
+    private HashMap<String, Integer> lastClientsIdInbox;
     private static boolean isServerOn = false;
     private static ServerSocket serverSocket;
     private ExecutorService executor;
     private final Object lock = new Object();
 
-    public ConnectionController(Database db) {
-        connectedClients = new HashMap<>();
-        this.db = db;
+    public ConnectionController() {
+        lastClientsIdInbox = new HashMap<>();
+        this.db = new Database();
     }
 
+    public static boolean isServerOn() {
+        return isServerOn;
+    }
+
+    /**
+     * Creates a new ServerSocket and stays listening for new connection.
+     * If a connection is accepted, a new Thread in the ExecutorThreadPool
+     * is executed to handle the given task
+     * If the server is turned off, the synchronized part of the method stop the execution thanks to lock.wait()
+     */
     public void runServer() {
-        System.out.println("--- Starting server");
         isServerOn = true;
         try {
             serverSocket = new ServerSocket(LISTENING_PORT);
@@ -40,6 +49,7 @@ public class ConnectionController {
             System.out.println("[runServer] [serverSocket] Error: " + e.getMessage());
         }
 
+        //Server listening thread
         Thread thread = new Thread(() -> {
             try {
                 Socket clientSocket = null;
@@ -55,12 +65,7 @@ public class ConnectionController {
 
                     clientSocket = serverSocket.accept();
 
-//                    Thread t = new Thread(new ClientHandler(clientSocket));
-//                    t.setDaemon(true);
-//                    t.start();
-
                     executor.execute(new ClientHandler(clientSocket));
-
                 }
             } catch (Exception e) {
                 System.out.println("[runServer] [thread] Error: " + e.getMessage());
@@ -72,7 +77,7 @@ public class ConnectionController {
 
     public void stopServer() {
         isServerOn = false;
-        connectedClients.clear();
+        lastClientsIdInbox.clear();
 
         synchronized (lock) {
             lock.notifyAll();
@@ -85,13 +90,15 @@ public class ConnectionController {
         } catch (IOException e) {
             System.out.println("[stopServer] [serverSocket] Error: " + e.getMessage());
         }
-        System.out.println("--- Stopping server");
     }
 
-    public static boolean isServerOn() {
-        return isServerOn;
-    }
-
+    /**
+     * This class handles the client Requests and returns Responses
+     *
+     * @see com.project.models.Response
+     * @see com.project.models.ConnectionRequest
+     * @see com.project.models.EmailRequest
+     */
     private final class ClientHandler implements Runnable {
         private final Socket clientSocket;
 
@@ -116,6 +123,8 @@ public class ConnectionController {
                     response = handleConnectionRequest(request);
                 } else if (obj instanceof EmailRequest email) {
                     response = handleEmailRequest(email);
+                } else {
+                    response = new Response(false, "Invalid request");
                 }
                 out.writeObject(response);
             } catch (Exception e) {
@@ -123,76 +132,97 @@ public class ConnectionController {
                 e.printStackTrace();
             } finally {
                 try {
-                    assert in != null;
-                    assert out != null;
-                    in.close();
-                    out.close();
+                    if (in != null)
+                        in.close();
+                    if (out != null)
+                        out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println("[ClientHandler] [run] Error closing stream: " + e.getMessage());
                 } finally {
                     try {
                         clientSocket.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        System.out.println("[ClientHandler] [run] Error closing client socket: " + e.getMessage());
                     }
                 }
             }
         }
 
+        /**
+         * Handles the connection request from the client
+         * If the request is a disconnection, the client is removed from the connectedClients
+         * If the request is a connection, the client is added to the connectedClients and the inbox is filled
+         *
+         * @param request the request from the client
+         * @return a Response object containing:
+         * - the successfulness of the request, a message and the inbox the connection was successful;
+         * - only the successfulness and the message otherwise.
+         */
         private Response handleConnectionRequest(ConnectionRequest request) {
             try {
-                if (!isServerOn) return new Response(false, "Server is off", null);
+                if (!isServerOn) return new Response(false, "Server is off");
 
                 String email = request.getEmail();
                 String password = request.getPassword();
                 ConnectionRequest.Status status = request.getStatus();
 
                 if (status == ConnectionRequest.Status.DISCONNECT) {
-                    connectedClients.remove(email);
+                    lastClientsIdInbox.remove(email);
                     LogController.clientDisconnected(email);
-                    return new Response(true, "Disconnection successful", null);
+                    return new Response(true, "Disconnection successful");
                 }
 
-                System.out.println("--- Handling connection request");
                 LogController.loginRequest(email);
 
                 if (!db.userExist(email)) {
                     LogController.loginDenied(email, "User not found");
-                    return new Response(false, "User not found", null);
+                    return new Response(false, "User not found");
                 }
 
                 if (!db.checkCredentials(email, password)) {
                     LogController.loginDenied(email, "Wrong password");
-                    return new Response(false, "Wrong password", null);
+                    return new Response(false, "Wrong password");
                 }
 
                 LogController.loginAccepted(email);
-                connectedClients.put(email, -1);
+                lastClientsIdInbox.put(email, -1);
 
                 return fillInbox(email);
             } catch (Exception e) {
-                return new Response(false, "Fail to handle connection request", null);
+                return new Response(false, "Fail to handle connection request");
             }
         }
 
+        /**
+         * Handles the email request from the client
+         * Based on the request type, this method will call the right method to handle the specific request
+         *
+         * @param request the request from the client
+         * @return a Response object passed by the called method
+         */
         private Response handleEmailRequest(EmailRequest request) {
-            if (!isServerOn) return new Response(false, "Server is off", null);
+            if (!isServerOn) return new Response(false, "Server is off");
 
             switch (request.getRequestType()) {
                 case SEND:
-                    System.out.println("--- Handling send request");
                     return sendEmail(request.getEmail());
                 case FILL_INBOX:
-                    System.out.println("--- Handling fill inbox request");
                     return fillInbox(request.getRequestingAddress());
                 case DELETE_FROM_INBOX:
-                    System.out.println("--- Handling delete request");
                     return deleteFromInbox(request.getEmail(), request.getRequestingAddress());
                 default:
-                    return new Response(false, "Invalid request", null);
+                    return new Response(false, "Invalid request");
             }
         }
 
+        /**
+         * Sends an email to the recipients
+         *
+         * @param email the email to send
+         * @return a Response object containing:
+         * - the successfulness of the request, a message and the list of wrong addresses if any;
+         * - only the successfulness and the message otherwise.
+         */
         private Response sendEmail(Email email) {
             try {
                 ArrayList<String> wrongRecipients = checkRecipients(email);
@@ -201,18 +231,30 @@ public class ConnectionController {
                     return new Response(false, "Wrong recipients", wrongRecipients);
                 }
                 if (db.insertEmail(email))
-                    return new Response(true, "Email sent", null);
+                    return new Response(true, "Email sent");
                 else
-                    return new Response(false, "Fail to send the email", null);
+                    return new Response(false, "Fail to send the email");
             } catch (Exception e) {
-                return new Response(false, "Fail to send the email", null);
+                return new Response(false, "Fail to send the email");
             }
         }
 
+        /**
+         * Retrieve the emails from the database and fill the client inbox
+         * The inbox is filled only if there are new emails
+         * The last id of the inbox is stored in the lastClientsIdInbox map
+         * The last id received from the database is stored in the account stats file
+         * If the last id of the inbox is less than the last id received from the database, the inbox is filled
+         *
+         * @param account the account of the client
+         * @return a Response object containing:
+         * - the successfulness of the request, a message and the inbox if any;
+         * - only the successfulness and the message otherwise.
+         */
         private Response fillInbox(String account) {
             try {
                 int lastWrittenId = db.readStats(account);
-                int lastInboxId = connectedClients.get(account);
+                int lastInboxId = lastClientsIdInbox.get(account);
                 ArrayList<Email> inbox = new ArrayList<>();
 
                 if (lastInboxId < lastWrittenId) {
@@ -222,12 +264,12 @@ public class ConnectionController {
 
                     inbox = emails;
 
-                    connectedClients.put(account, lastWrittenId);
+                    lastClientsIdInbox.put(account, lastWrittenId);
                 }
 
                 return new Response(true, "Inbox filled", inbox);
             } catch (Exception e) {
-                return new Response(false, "Fail to fill the inbox", null);
+                return new Response(false, "Fail to fill the inbox");
             }
         }
 
@@ -235,13 +277,13 @@ public class ConnectionController {
             try {
                 if (db.deleteEmail(email, account)) {
                     LogController.emailDeleted(account);
-                    return new Response(true, "Email deleted", null);
+                    return new Response(true, "Email deleted");
                 } else {
                     LogController.failEmailDeleted(account);
-                    return new Response(false, "Fail to delete the email", null);
+                    return new Response(false, "Fail to delete the email");
                 }
             } catch (Exception e) {
-                return new Response(false, "Fail to delete the email", null);
+                return new Response(false, "Fail to delete the email");
             }
         }
 

@@ -19,3 +19,4 @@
 - [x] Controllo messaggi degli Alert (italiano o inglese???)
 - [ ] Controllo client già loggato
 - [ ] Cache delle email da inviare
+- [ ] Togliere tutti gli assert
