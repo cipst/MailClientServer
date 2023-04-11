@@ -174,6 +174,11 @@ public class ConnectionController {
 
                 LogController.loginRequest(email);
 
+                if(lastClientsIdInbox.containsKey(email)) {
+                    LogController.loginDenied(email, "User is already logged in");
+                    return new Response(false, "User is already logged in");
+                }
+
                 if (!db.userExist(email)) {
                     LogController.loginDenied(email, "User not found");
                     return new Response(false, "User not found");
