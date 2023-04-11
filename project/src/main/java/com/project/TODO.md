@@ -17,6 +17,6 @@
 - [x] Revisione dei try/catch (client/server)
 - [x] Messaggi di errore adeguati a comprendere dove avviene l'errore
 - [x] Controllo messaggi degli Alert (italiano o inglese???)
-- [ ] Controllo client già loggato
-- [ ] Cache delle email da inviare
-- [ ] Togliere tutti gli assert
+- [x] Controllo client già loggato
+- [x] Cache delle email da inviare
+- [x] Togliere tutti gli assert

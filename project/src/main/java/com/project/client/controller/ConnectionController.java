@@ -7,8 +7,6 @@ import com.project.models.Email;
 import com.project.models.Response;
 import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 
@@ -26,8 +24,6 @@ import java.util.concurrent.TimeUnit;
 public class ConnectionController {
 
     private static final int CONNECTION_PORT = 1234;
-    private static ListProperty<Email> emailsInbox = new SimpleListProperty<>();
-    private static ObservableList<Email> emailsInboxContent = FXCollections.observableArrayList();
     private static ObjectProperty<Color> serverStatus = new SimpleObjectProperty<>(Color.LAWNGREEN);
     private static BooleanProperty actionsDisabled = new SimpleBooleanProperty(true);
 
@@ -37,16 +33,8 @@ public class ConnectionController {
 
     private static boolean isServerOn = true;
 
-    public static ListProperty<Email> emailsInboxProperty() {
-        return emailsInbox;
-    }
-
     public static ObjectProperty<Color> serverStatusProperty() {
         return serverStatus;
-    }
-
-    static {
-        emailsInbox.set(emailsInboxContent);
     }
 
     private static void initConnectionObjects() throws IOException {
@@ -94,12 +82,28 @@ public class ConnectionController {
                     System.out.println("Server is up thanks to startConnection call");
                     changeServerStatus(true);
 
+                    sendCachedEmails();
+
                     ClientGUIController.setSelectedEmail(null);
                 } catch (Exception e) {
                     System.out.println("[startServiceThread] Server is still down: " + e.getMessage());
                 }
             }
         }, 2, 1, TimeUnit.SECONDS);
+    }
+
+    private static void sendCachedEmails() {
+        ArrayList<Email> cachedEmails = UserController.getCache();
+        if (cachedEmails.size() > 0) {
+            for (Email email : cachedEmails) {
+                try {
+                    ConnectionController.sendEmail(email);
+                } catch (Exception e) {
+                    System.out.println("[sendCachedEmails] " + e.getMessage());
+                }
+            }
+            UserController.setCache(new ArrayList<>());
+        }
     }
 
     private static void changeServerStatus(boolean newStatus) {
@@ -135,9 +139,9 @@ public class ConnectionController {
             if (!res.isSuccessful())
                 throw new Exception(res.getMessage());
 
-            emailsInboxContent.clear();
-            emailsInboxContent.addAll(((ArrayList<Email>) res.getData()));
-            emailsInboxContent.sort(Email::compareTo);
+            UserController.emailsInboxProperty().clear();
+            UserController.emailsInboxProperty().addAll(((ArrayList<Email>) res.getData()));
+            UserController.emailsInboxProperty().sort(Email::compareTo);
             setActionsDisabled(true);
         } catch (IOException e) {
             System.out.println("[startConnection] Connection Error: " + e.getMessage());
@@ -201,8 +205,8 @@ public class ConnectionController {
 
             ArrayList<Email> emails = (ArrayList<Email>) res.getData();
             if (emails.size() > 0) {
-                emailsInboxContent.addAll(0, emails);
-                emailsInboxContent.sort(Email::compareTo);
+                UserController.emailsInboxProperty().addAll(0, emails);
+                UserController.emailsInboxProperty().sort(Email::compareTo);
                 return true;
             }
 
@@ -219,6 +223,7 @@ public class ConnectionController {
      * It sends an EmailRequest to the server to delete an email from the inbox
      * It waits for a Response from the server
      * If the Response is successful it deletes the email from the inbox
+     *
      * @param email the email to delete
      * @throws Exception when the server wasn't successful in performing the operation
      */
@@ -238,7 +243,7 @@ public class ConnectionController {
             if (!res.isSuccessful())
                 throw new Exception(res.getMessage());
 
-            emailsInbox.remove(email);
+            UserController.emailsInboxProperty().remove(email);
         } catch (IOException e) {
             System.out.println("[deleteEmail] Connection Error: " + e.getMessage());
             throw new Exception("Connection Error");
@@ -251,11 +256,16 @@ public class ConnectionController {
      * It sends an EmailRequest to the server to send an email
      * It waits for a Response from the server
      * If the Response is successful the email was sent correctly
+     *
      * @param email the email to send
      * @throws Exception when the server wasn't successful in performing the operation
      */
     public static void sendEmail(Email email) throws Exception {
-        if (!isServerOn) throw new Exception("Server is down");
+        if (!isServerOn) {
+            UserController.getCache().add(email);
+            throw new Exception("Server is down.\nThe email has been saved and will be sent when the server comes up again don't close the client!");
+        }
+
 
         User user = UserController.getUser();
 

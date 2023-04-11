@@ -83,6 +83,7 @@ public class NewEmailGUIController {
     /**
      * Checks if all addresses are valid in terms of string structure
      * Regex: there must be a @ and an extension, like .com or .it
+     *
      * @param addresses list of addresses to check
      * @return an arrayList with invalid addresses if some are invalid, otherwise an empty list
      */
@@ -103,6 +104,7 @@ public class NewEmailGUIController {
     /**
      * Checks if address is valid in terms of string structure
      * Regex: there must be a @ and an extension, like .com or .it
+     *
      * @param address address to check
      * @return the address if it is invalid, empty string otherwise
      */
@@ -121,9 +123,9 @@ public class NewEmailGUIController {
     /**
      * Checks if there is a recipient in the to field and if the recipients' addresses are correctly divided by a comma
      * This method calls checkEmail method and returns an alert with all the wrong recipients' addresses
+     *
      * @param to The string that it is going to be checked
      * @return true if the string is valid, false otherwise
-     *
      * @see #checkEmail(String[])
      * @see #checkEmail(String)
      */
@@ -184,13 +186,20 @@ public class NewEmailGUIController {
             ConnectionController.sendEmail(new Email(lblFrom.getText(), addresses, subjectField.getText(), msgHtml.getHtmlText().replace("contenteditable=\"true\"", "contenteditable=\"false\""),
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
 
+            new Alert(Alert.AlertType.INFORMATION, "Email sent successfully").showAndWait();
+        } catch (Exception e) {
+            Alert.AlertType alertType;
+
+            if (e.getMessage().contains("The email has been saved"))
+                alertType = Alert.AlertType.WARNING;
+            else
+                alertType = Alert.AlertType.ERROR;
+
+            new Alert(alertType, e.getMessage()).showAndWait();
+        } finally {
             // Close window
             Stage stage = (Stage) btnSend.getScene().getWindow();
             stage.close();
-
-            new Alert(Alert.AlertType.INFORMATION, "Email sent successfully").showAndWait();
-        } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
         }
     }
 }
