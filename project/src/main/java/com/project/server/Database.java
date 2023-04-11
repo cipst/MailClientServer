@@ -44,6 +44,7 @@ public class Database {
 
     /**
      * Write the accounts HashMap to the database.json file
+     *
      * @param accounts HashMap with the accounts
      */
     private void onLoad(HashMap<String, String> accounts) {
@@ -191,11 +192,12 @@ public class Database {
             File emailFile = new File(emailFilePath);
             File[] files = emailFile.listFiles();
 
-            assert files != null;
-            for (File file : files) {
-                if (file.getName().compareTo("stats.json") != 0) {
-                    String date = file.getName().substring(0, file.getName().length() - 5);
-                    emails.addAll(readEmailsByDate(address, date));
+            if (files != null) {
+                for (File file : files) {
+                    if (file.getName().compareTo("stats.json") != 0) {
+                        String date = file.getName().substring(0, file.getName().length() - 5);
+                        emails.addAll(readEmailsByDate(address, date));
+                    }
                 }
             }
         } catch (Exception e) {

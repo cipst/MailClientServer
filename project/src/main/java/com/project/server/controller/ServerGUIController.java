@@ -27,21 +27,22 @@ public class ServerGUIController {
         File emailFile = new File(LogController.getLogsPath() + "/");
         File[] files = emailFile.listFiles();
 
-        assert files != null;
-        for (File file : files)
-            logsListView.getItems().add(file.getName());
+        if (files != null) {
+            for (File file : files)
+                logsListView.getItems().add(file.getName());
 
-        logsTextArea.textProperty().bind(LogController.currentMessagesLogProperty());
+            logsTextArea.textProperty().bind(LogController.currentMessagesLogProperty());
 
-        logsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                System.out.println("Selected item: " + newValue);
-                String selected = logsListView.getSelectionModel().getSelectedItem();
-                LogController.read(selected);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        });
+            logsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                try {
+                    System.out.println("Selected item: " + newValue);
+                    String selected = logsListView.getSelectionModel().getSelectedItem();
+                    LogController.read(selected);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            });
+        }
     }
 
     /**
@@ -82,7 +83,7 @@ public class ServerGUIController {
         }
     }
 
-    public void stopServer(){
+    public void stopServer() {
         connectionController.stopServer();
     }
 }

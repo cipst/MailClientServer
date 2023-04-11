@@ -98,8 +98,8 @@ public class LogController {
             System.out.println("[LogController] [write] Error: " + e.getMessage());
         } finally {
             try {
-                assert writer != null;
-                writer.close();
+                if(writer != null)
+                    writer.close();
             } catch (Exception e) {
                 System.out.println("[LogController] [write] Error: " + e.getMessage());
             } finally {
@@ -121,7 +121,8 @@ public class LogController {
     }
 
     public static String stopServer(String reason) {
-        assert !filePath.equals("");
+        if(filePath.equals("")) return "";
+
         String fileName = getFileName();
         File oldFile = new File(filePath);
 
@@ -139,47 +140,47 @@ public class LogController {
     }
 
     public static void emailSent(String by, ArrayList<String> to) {
-        assert !filePath.equals("");
+        if (filePath.equals("")) return;
         write(String.format("Email sent by %s to %s", by, to));
     }
 
     public static void emailReceived(String from) {
-        assert !filePath.equals("");
+        if (filePath.equals("")) return;
         write(String.format("Email received from %s", from));
     }
 
     public static void loginRequest(String address) {
-        assert !filePath.equals("");
+        if (filePath.equals("")) return;
         write(String.format("%s is trying to login", address));
     }
 
     public static void clientDisconnected(String address) {
-        assert !filePath.equals("");
+        if (filePath.equals("")) return;
         write(String.format("%s has disconnected", address));
     }
 
     public static void loginAccepted(String address) {
-        assert !filePath.equals("");
+        if (filePath.equals("")) return;
         write(String.format("%s has successfully logged in", address));
     }
 
     public static void loginDenied(String address, String reason) {
-        assert !filePath.equals("");
+        if (filePath.equals("")) return;
         write(String.format("%s: %s", reason, address));
     }
 
     public static void emailRejected(String sender, ArrayList<String> wrongRecipients) {
-        assert !filePath.equals("");
+        if (filePath.equals("")) return;
         write(String.format("Email from %s rejected because of wrong recipients: %s", sender, wrongRecipients));
     }
 
     public static void emailDeleted(String account) {
-        assert !filePath.equals("");
+        if (filePath.equals("")) return;
         write(String.format("Email deleted from %s", account));
     }
 
     public static void failEmailDeleted(String account) {
-        assert !filePath.equals("");
+        if (filePath.equals("")) return;
         write(String.format("Failed to delete email from %s", account));
     }
 }
