@@ -1,6 +1,6 @@
 package com.project.client.controller;
 
-import com.project.models.EmailSerializable;
+import com.project.models.Email;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -168,7 +168,7 @@ public class NewEmailGUIController {
 
         System.out.println("Send email");
         try {
-            ConnectionController.sendEmail(new EmailSerializable(lblFrom.getText(), addresses, subjectField.getText(), msgHtml.getHtmlText().replace("contenteditable=\"true\"", "contenteditable=\"false\""),
+            ConnectionController.sendEmail(new Email(lblFrom.getText(), addresses, subjectField.getText(), msgHtml.getHtmlText().replace("contenteditable=\"true\"", "contenteditable=\"false\""),
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
 
             // Close window

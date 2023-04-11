@@ -1,6 +1,9 @@
 package com.project.models;
 
-public class EmailRequestModel implements java.io.Serializable {
+/**
+ * Client uses this model to tell the Server which operation to perform
+ */
+public class EmailRequest implements java.io.Serializable {
     public enum RequestType {
         SEND,
         DELETE_FROM_INBOX,
@@ -9,15 +12,15 @@ public class EmailRequestModel implements java.io.Serializable {
 
     private final String requestingAddress;
     private final RequestType requestType;
-    private final EmailSerializable email;
+    private final Email email;
 
-    public EmailRequestModel(String requestingAddress, RequestType requestType, EmailSerializable email) {
+    public EmailRequest(String requestingAddress, RequestType requestType, Email email) {
         this.requestingAddress = requestingAddress;
         this.requestType = requestType;
         this.email = email;
     }
 
-    public EmailRequestModel(String requestingAddress, RequestType requestType) {
+    public EmailRequest(String requestingAddress, RequestType requestType) {
         this.requestingAddress = requestingAddress;
         this.requestType = requestType;
         this.email = null;
@@ -31,7 +34,7 @@ public class EmailRequestModel implements java.io.Serializable {
         return requestType;
     }
 
-    public EmailSerializable getEmail() {
+    public Email getEmail() {
         return email;
     }
 

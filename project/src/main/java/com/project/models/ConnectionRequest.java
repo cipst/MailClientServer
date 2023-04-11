@@ -1,6 +1,9 @@
 package com.project.models;
 
-public class ConnectionRequestModel implements java.io.Serializable {
+/**
+ * Client uses this model to communicate with the Server its data upon connection/disconnection
+ */
+public class ConnectionRequest implements java.io.Serializable {
 
     public enum Status {
         CONNECT, DISCONNECT
@@ -10,7 +13,7 @@ public class ConnectionRequestModel implements java.io.Serializable {
     private final String password;
     private final Status status;
 
-    public ConnectionRequestModel(String email, String password, Status status) {
+    public ConnectionRequest(String email, String password, Status status) {
         this.status = status;
         this.email = email;
         this.password = password;

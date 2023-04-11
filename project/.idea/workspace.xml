@@ -6,9 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="5880fde7-3e97-4fe1-a47a-e4533b88f61b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/TODO.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/TODO.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ClientGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ClientGUIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ConnectionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/ConnectionController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/client/controller/NewEmailGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/client/controller/NewEmailGUIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/models/ConnectionRequestModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/models/ConnectionRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/models/EmailRequestModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/models/EmailRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/models/EmailSerializable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/models/Email.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/models/ResponseModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/models/Response.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/Database.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ConnectionController.java" afterDir="false" />
     </list>
+    <list id="5ded229c-a552-4113-ae64-6600cbbfd74f" name="Changes by matte" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,7 +35,12 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="project" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
@@ -137,6 +150,7 @@
       <workItem from="1679994413699" duration="80000" />
       <workItem from="1680005270614" duration="3897000" />
       <workItem from="1680428297813" duration="1676000" />
+      <workItem from="1681201361201" duration="996000" />
     </task>
     <servers />
   </component>

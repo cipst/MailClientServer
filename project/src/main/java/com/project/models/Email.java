@@ -2,17 +2,19 @@ package com.project.models;
 
 import java.util.ArrayList;
 
-public class EmailSerializable implements java.io.Serializable {
+/**
+ * This model is a standardized way to send/receive emails for both Client and Server
+ */
+public class Email implements java.io.Serializable {
 
     private int id;
     private String sender;
     private ArrayList<String> recipients;
     private String subject;
     private String message;
-
     private String date;
 
-    public EmailSerializable(int id, String sender, ArrayList<String> recipients, String subject, String message, String date) {
+    public Email(int id, String sender, ArrayList<String> recipients, String subject, String message, String date) {
         this.id = id;
         this.sender = sender;
         this.recipients = recipients;
@@ -21,7 +23,7 @@ public class EmailSerializable implements java.io.Serializable {
         this.date = date;
     }
 
-    public EmailSerializable(String sender, ArrayList<String> recipients, String subject, String message, String date) {
+    public Email(String sender, ArrayList<String> recipients, String subject, String message, String date) {
         this.sender = sender;
         this.recipients = recipients;
         this.subject = subject;
@@ -82,8 +84,8 @@ public class EmailSerializable implements java.io.Serializable {
         return String.format("Sender: %s - Recipients: %s - Subject: %s - Message: %s - Date: %s", sender, recipients, subject, message, date);
     }
 
-    public int compareTo(EmailSerializable emailSerializable) {
-        return -this.date.compareTo(emailSerializable.getDate());
+    public int compareTo(Email email) {
+        return -this.date.compareTo(email.getDate());
     }
 
 }

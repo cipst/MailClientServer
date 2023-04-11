@@ -1,9 +1,9 @@
 package com.project.server.controller;
 
-import com.project.models.ConnectionRequestModel;
-import com.project.models.EmailRequestModel;
-import com.project.models.EmailSerializable;
-import com.project.models.ResponseModel;
+import com.project.models.ConnectionRequest;
+import com.project.models.EmailRequest;
+import com.project.models.Email;
+import com.project.models.Response;
 import com.project.server.Database;
 
 import java.io.IOException;
@@ -109,12 +109,12 @@ public class ConnectionController {
 
                 in = new ObjectInputStream(clientSocket.getInputStream());
                 out = new ObjectOutputStream(clientSocket.getOutputStream());
-                ResponseModel response = null;
+                Response response = null;
 
                 Object obj = in.readObject();
-                if (obj instanceof ConnectionRequestModel request) {
+                if (obj instanceof ConnectionRequest request) {
                     response = handleConnectionRequest(request);
-                } else if (obj instanceof EmailRequestModel email) {
+                } else if (obj instanceof EmailRequest email) {
                     response = handleEmailRequest(email);
                 }
                 out.writeObject(response);
@@ -139,18 +139,18 @@ public class ConnectionController {
             }
         }
 
-        private ResponseModel handleConnectionRequest(ConnectionRequestModel request) {
+        private Response handleConnectionRequest(ConnectionRequest request) {
             try {
-                if (!isServerOn) return new ResponseModel(false, "Server is off", null);
+                if (!isServerOn) return new Response(false, "Server is off", null);
 
                 String email = request.getEmail();
                 String password = request.getPassword();
-                ConnectionRequestModel.Status status = request.getStatus();
+                ConnectionRequest.Status status = request.getStatus();
 
-                if (status == ConnectionRequestModel.Status.DISCONNECT) {
+                if (status == ConnectionRequest.Status.DISCONNECT) {
                     connectedClients.remove(email);
                     LogController.clientDisconnected(email);
-                    return new ResponseModel(true, "Disconnection successful", null);
+                    return new Response(true, "Disconnection successful", null);
                 }
 
                 System.out.println("--- Handling connection request");
@@ -158,12 +158,12 @@ public class ConnectionController {
 
                 if (!db.userExist(email)) {
                     LogController.loginDenied(email, "User not found");
-                    return new ResponseModel(false, "User not found", null);
+                    return new Response(false, "User not found", null);
                 }
 
                 if (!db.checkCredentials(email, password)) {
                     LogController.loginDenied(email, "Wrong password");
-                    return new ResponseModel(false, "Wrong password", null);
+                    return new Response(false, "Wrong password", null);
                 }
 
                 LogController.loginAccepted(email);
@@ -171,12 +171,12 @@ public class ConnectionController {
 
                 return fillInbox(email);
             } catch (Exception e) {
-                return new ResponseModel(false, "Fail to handle connection request", null);
+                return new Response(false, "Fail to handle connection request", null);
             }
         }
 
-        private ResponseModel handleEmailRequest(EmailRequestModel request) {
-            if (!isServerOn) return new ResponseModel(false, "Server is off", null);
+        private Response handleEmailRequest(EmailRequest request) {
+            if (!isServerOn) return new Response(false, "Server is off", null);
 
             switch (request.getRequestType()) {
                 case SEND:
@@ -189,34 +189,34 @@ public class ConnectionController {
                     System.out.println("--- Handling delete request");
                     return deleteFromInbox(request.getEmail(), request.getRequestingAddress());
                 default:
-                    return new ResponseModel(false, "Invalid request", null);
+                    return new Response(false, "Invalid request", null);
             }
         }
 
-        private ResponseModel sendEmail(EmailSerializable email) {
+        private Response sendEmail(Email email) {
             try {
                 ArrayList<String> wrongRecipients = checkRecipients(email);
                 if (wrongRecipients.size() > 0) {
                     LogController.emailRejected(email.getSender(), wrongRecipients);
-                    return new ResponseModel(false, "Wrong recipients", wrongRecipients);
+                    return new Response(false, "Wrong recipients", wrongRecipients);
                 }
                 if (db.insertEmail(email))
-                    return new ResponseModel(true, "Email sent", null);
+                    return new Response(true, "Email sent", null);
                 else
-                    return new ResponseModel(false, "Fail to send the email", null);
+                    return new Response(false, "Fail to send the email", null);
             } catch (Exception e) {
-                return new ResponseModel(false, "Fail to send the email", null);
+                return new Response(false, "Fail to send the email", null);
             }
         }
 
-        private ResponseModel fillInbox(String account) {
+        private Response fillInbox(String account) {
             try {
                 int lastWrittenId = db.readStats(account);
                 int lastInboxId = connectedClients.get(account);
-                ArrayList<EmailSerializable> inbox = new ArrayList<>();
+                ArrayList<Email> inbox = new ArrayList<>();
 
                 if (lastInboxId < lastWrittenId) {
-                    ArrayList<EmailSerializable> emails = db.readAllEmails(account);
+                    ArrayList<Email> emails = db.readAllEmails(account);
 
                     emails.removeIf(s -> s.getId() <= lastInboxId);
 
@@ -225,27 +225,27 @@ public class ConnectionController {
                     connectedClients.put(account, lastWrittenId);
                 }
 
-                return new ResponseModel(true, "Inbox filled", inbox);
+                return new Response(true, "Inbox filled", inbox);
             } catch (Exception e) {
-                return new ResponseModel(false, "Fail to fill the inbox", null);
+                return new Response(false, "Fail to fill the inbox", null);
             }
         }
 
-        private ResponseModel deleteFromInbox(EmailSerializable email, String account) {
+        private Response deleteFromInbox(Email email, String account) {
             try {
                 if (db.deleteEmail(email, account)) {
                     LogController.emailDeleted(account);
-                    return new ResponseModel(true, "Email deleted", null);
+                    return new Response(true, "Email deleted", null);
                 } else {
                     LogController.failEmailDeleted(account);
-                    return new ResponseModel(false, "Fail to delete the email", null);
+                    return new Response(false, "Fail to delete the email", null);
                 }
             } catch (Exception e) {
-                return new ResponseModel(false, "Fail to delete the email", null);
+                return new Response(false, "Fail to delete the email", null);
             }
         }
 
-        private ArrayList<String> checkRecipients(EmailSerializable email) {
+        private ArrayList<String> checkRecipients(Email email) {
             boolean currentRecipientExists;
             ArrayList<String> wrongRecipients = new ArrayList<>();
 

@@ -2,7 +2,7 @@ package com.project.client.controller;
 
 import com.project.client.ClientGUI;
 import com.project.client.model.UserModel;
-import com.project.models.EmailSerializable;
+import com.project.models.Email;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -38,7 +38,7 @@ public class ClientGUIController {
     @FXML
     public Button btnNewEmail;
     @FXML
-    public ListView<EmailSerializable> listViewEmails;
+    public ListView<Email> listViewEmails;
     @FXML
     public Label sender;
     @FXML
@@ -55,8 +55,8 @@ public class ClientGUIController {
     public Circle statusServer;
 
     private static Actions action;
-    private static EmailSerializable selectedEmail;
-    private static ObjectProperty<EmailSerializable> selectedEmailProperty = new SimpleObjectProperty<>();
+    private static Email selectedEmail;
+    private static ObjectProperty<Email> selectedEmailProperty = new SimpleObjectProperty<>();
 
 
     public void initialize() {
@@ -96,10 +96,10 @@ public class ClientGUIController {
          */
         listViewEmails.setCellFactory(new Callback<>() {
             @Override
-            public ListCell<EmailSerializable> call(ListView<EmailSerializable> param) {
+            public ListCell<Email> call(ListView<Email> param) {
                 return new ListCell<>() {
                     @Override
-                    protected void updateItem(EmailSerializable item, boolean empty) {
+                    protected void updateItem(Email item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item != null) {
                             Platform.runLater(() -> setText(item.getSubject()));
@@ -243,11 +243,11 @@ public class ClientGUIController {
         return action;
     }
 
-    public static EmailSerializable getSelectedEmail() {
+    public static Email getSelectedEmail() {
         return selectedEmail;
     }
 
-    public static void setSelectedEmail(EmailSerializable email) {
+    public static void setSelectedEmail(Email email) {
         selectedEmail = email;
     }
 }

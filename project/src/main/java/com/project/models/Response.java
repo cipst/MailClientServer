@@ -2,13 +2,16 @@ package com.project.models;
 
 import java.io.Serializable;
 
-public class ResponseModel implements Serializable {
+/**
+ * This model is a standardized response from the Server to the Client
+ */
+public class Response implements Serializable {
 
     private final boolean success;
     private final String message;
     private final Object data;
 
-    public ResponseModel(boolean success, String message, Object data) {
+    public Response(boolean success, String message, Object data) {
         if(message == null)
             throw new NullPointerException("Message cannot be null");
         this.success = success;
@@ -16,7 +19,7 @@ public class ResponseModel implements Serializable {
         this.data = data;
     }
 
-    public ResponseModel(boolean success) {
+    public Response(boolean success) {
         this(success, "", null);
     }
 

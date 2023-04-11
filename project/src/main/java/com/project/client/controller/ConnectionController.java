@@ -1,10 +1,10 @@
 package com.project.client.controller;
 
 import com.project.client.model.UserModel;
-import com.project.models.ConnectionRequestModel;
-import com.project.models.EmailRequestModel;
-import com.project.models.EmailSerializable;
-import com.project.models.ResponseModel;
+import com.project.models.ConnectionRequest;
+import com.project.models.EmailRequest;
+import com.project.models.Email;
+import com.project.models.Response;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -26,8 +26,8 @@ import java.util.concurrent.TimeUnit;
 public class ConnectionController {
 
     private static final int CONNECTION_PORT = 1234;
-    private static ListProperty<EmailSerializable> emailsInbox = new SimpleListProperty<>();
-    private static ObservableList<EmailSerializable> emailsInboxContent = FXCollections.observableArrayList();
+    private static ListProperty<Email> emailsInbox = new SimpleListProperty<>();
+    private static ObservableList<Email> emailsInboxContent = FXCollections.observableArrayList();
     private static ObjectProperty<Color> serverStatus = new SimpleObjectProperty<>(Color.LAWNGREEN);
     private static BooleanProperty actionsDisabled = new SimpleBooleanProperty(true);
     private static Socket socket;
@@ -36,7 +36,7 @@ public class ConnectionController {
 
     private static boolean isServerOn = true;
 
-    public static ListProperty<EmailSerializable> emailsInboxProperty() {
+    public static ListProperty<Email> emailsInboxProperty() {
         return emailsInbox;
     }
 
@@ -104,18 +104,18 @@ public class ConnectionController {
             socket.setSoTimeout(1000);
             inStream = new ObjectInputStream(socket.getInputStream());
 
-            ConnectionRequestModel conn = new ConnectionRequestModel(user.getAddress(), user.getPassword(), ConnectionRequestModel.Status.CONNECT); // Creo l'oggetto da inviare per richiedere la connessione al server
+            ConnectionRequest conn = new ConnectionRequest(user.getAddress(), user.getPassword(), ConnectionRequest.Status.CONNECT); // Creo l'oggetto da inviare per richiedere la connessione al server
             outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
 
             Object obj = inStream.readObject();
-            if (!(obj instanceof ResponseModel res)) throw new Exception("Invalid Response");
+            if (!(obj instanceof Response res)) throw new Exception("Invalid Response");
 
             if (!res.isSuccessful())
                 throw new Exception(res.getMessage());
 
             emailsInboxContent.clear();
-            emailsInboxContent.addAll(((ArrayList<EmailSerializable>) res.getData()));
-            emailsInboxContent.sort(EmailSerializable::compareTo);
+            emailsInboxContent.addAll(((ArrayList<Email>) res.getData()));
+            emailsInboxContent.sort(Email::compareTo);
             setActionsDisabled(true);
         } catch (IOException e) {
             System.out.println("[startConnection] Connection Error: " + e.getMessage());
@@ -141,11 +141,11 @@ public class ConnectionController {
             socket.setSoTimeout(1000);
             inStream = new ObjectInputStream(socket.getInputStream());
 
-            ConnectionRequestModel conn = new ConnectionRequestModel(UserController.getUser().getAddress(), UserController.getUser().getPassword(), ConnectionRequestModel.Status.DISCONNECT); // Creo l'oggetto da inviare per richiedere la disconnessione al server
+            ConnectionRequest conn = new ConnectionRequest(UserController.getUser().getAddress(), UserController.getUser().getPassword(), ConnectionRequest.Status.DISCONNECT); // Creo l'oggetto da inviare per richiedere la disconnessione al server
             outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
 
             Object obj = inStream.readObject();
-            if (!(obj instanceof ResponseModel res)) throw new Exception("Invalid Response");
+            if (!(obj instanceof Response res)) throw new Exception("Invalid Response");
 
             if (!res.isSuccessful())
                 throw new Exception("Invalid Credentials");
@@ -175,18 +175,18 @@ public class ConnectionController {
             socket.setSoTimeout(1000);
             inStream = new ObjectInputStream(socket.getInputStream());
 
-            EmailRequestModel req = new EmailRequestModel(user.getAddress(), EmailRequestModel.RequestType.FILL_INBOX); // Creo l'oggetto da inviare per richiedere la connessione al server
+            EmailRequest req = new EmailRequest(user.getAddress(), EmailRequest.RequestType.FILL_INBOX); // Creo l'oggetto da inviare per richiedere la connessione al server
             outStream.writeObject(req); // Scrivo l'oggetto sullo stream di uscita
 
             Object obj = inStream.readObject();
-            if (!(obj instanceof ResponseModel res)) throw new Exception("Invalid Response");
+            if (!(obj instanceof Response res)) throw new Exception("Invalid Response");
 
             if (!res.isSuccessful()) throw new Exception(res.getMessage());
 
-            ArrayList<EmailSerializable> emails = (ArrayList<EmailSerializable>) res.getData();
+            ArrayList<Email> emails = (ArrayList<Email>) res.getData();
             if (emails.size() > 0) {
                 emailsInboxContent.addAll(0, emails);
-                emailsInboxContent.sort(EmailSerializable::compareTo);
+                emailsInboxContent.sort(Email::compareTo);
                 return true;
             }
 
@@ -205,7 +205,7 @@ public class ConnectionController {
         }
     }
 
-    public static void deleteEmail(EmailSerializable email) throws Exception {
+    public static void deleteEmail(Email email) throws Exception {
         if (!isServerOn) throw new Exception("Server is down");
 
         UserModel user = UserController.getUser();
@@ -216,11 +216,11 @@ public class ConnectionController {
             socket.setSoTimeout(1000);
             inStream = new ObjectInputStream(socket.getInputStream());
 
-            EmailRequestModel conn = new EmailRequestModel(user.getAddress(), EmailRequestModel.RequestType.DELETE_FROM_INBOX, email); // Creo l'oggetto da inviare per richiedere la connessione al server
+            EmailRequest conn = new EmailRequest(user.getAddress(), EmailRequest.RequestType.DELETE_FROM_INBOX, email); // Creo l'oggetto da inviare per richiedere la connessione al server
             outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
 
             Object obj = inStream.readObject();
-            if (!(obj instanceof ResponseModel res)) throw new Exception("Invalid Response");
+            if (!(obj instanceof Response res)) throw new Exception("Invalid Response");
 
             if (!res.isSuccessful())
                 throw new Exception(res.getMessage());
@@ -240,7 +240,7 @@ public class ConnectionController {
         }
     }
 
-    public static void sendEmail(EmailSerializable email) throws Exception {
+    public static void sendEmail(Email email) throws Exception {
         if (!isServerOn) throw new Exception("Server is down");
 
         UserModel user = UserController.getUser();
@@ -252,11 +252,11 @@ public class ConnectionController {
             socket.setSoTimeout(1000);
             inStream = new ObjectInputStream(socket.getInputStream());
 
-            EmailRequestModel conn = new EmailRequestModel(user.getAddress(), EmailRequestModel.RequestType.SEND, email); // Creo l'oggetto da inviare per richiedere la connessione al server
+            EmailRequest conn = new EmailRequest(user.getAddress(), EmailRequest.RequestType.SEND, email); // Creo l'oggetto da inviare per richiedere la connessione al server
             outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
 
             Object obj = inStream.readObject();
-            if (!(obj instanceof ResponseModel res)) throw new Exception("Invalid Response");
+            if (!(obj instanceof Response res)) throw new Exception("Invalid Response");
 
             if (!res.isSuccessful()) {
                 throw new Exception("Wrong Recipients:\n" + res.getData().toString());

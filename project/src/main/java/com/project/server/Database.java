@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import com.project.models.EmailSerializable;
+import com.project.models.Email;
 import com.project.server.controller.LogController;
 
 import java.io.File;
@@ -114,7 +114,7 @@ public class Database {
         return areValid;
     }
 
-    private boolean writeEmail(EmailSerializable email, String address) {
+    private boolean writeEmail(Email email, String address) {
         String emailFileName = email.getDate().split(" ")[0].replaceAll("/", "-");
         String emailFilePath = EMAILS_PATH + "/" + address + "/" + emailFileName + ".json";
         boolean isOperationSuccessful;
@@ -124,7 +124,7 @@ public class Database {
             Gson g = new GsonBuilder().setPrettyPrinting().create();
 
             emailLocks.get(address).readLock().lock();
-            ArrayList<EmailSerializable> emails = g.fromJson(reader, ArrayList.class);
+            ArrayList<Email> emails = g.fromJson(reader, ArrayList.class);
             isOperationSuccessful = emails.add(email);
             reader.close();
             emailLocks.get(address).readLock().unlock();
@@ -148,9 +148,9 @@ public class Database {
         return isOperationSuccessful;
     }
 
-    private ArrayList<EmailSerializable> readEmailsByDate(String address, String date) {
+    private ArrayList<Email> readEmailsByDate(String address, String date) {
         String emailFilePath = EMAILS_PATH + "/" + address + "/" + date + ".json";
-        ArrayList<EmailSerializable> emails = new ArrayList<>();
+        ArrayList<Email> emails = new ArrayList<>();
 
         try {
             Reader reader = new FileReader(emailFilePath);
@@ -162,7 +162,7 @@ public class Database {
             emailLocks.get(address).readLock().unlock();
 
             for (int i = 0; i < array.size(); i++) {
-                emails.add(g.fromJson(array.get(i), EmailSerializable.class));
+                emails.add(g.fromJson(array.get(i), Email.class));
             }
 
         } catch (Exception e) {
@@ -176,9 +176,9 @@ public class Database {
         return emails;
     }
 
-    public ArrayList<EmailSerializable> readAllEmails(String address) {
+    public ArrayList<Email> readAllEmails(String address) {
         String emailFilePath = EMAILS_PATH + "/" + address + "/";
-        ArrayList<EmailSerializable> emails = new ArrayList<>();
+        ArrayList<Email> emails = new ArrayList<>();
 
         try {
             File emailFile = new File(emailFilePath);
@@ -256,7 +256,7 @@ public class Database {
         return isOperationSuccessful;
     }
 
-    public boolean insertEmail(EmailSerializable email) {
+    public boolean insertEmail(Email email) {
         boolean isOperationSuccessful = true;
         LogController.emailSent(email.getSender(), email.getRecipients());
 
@@ -287,7 +287,7 @@ public class Database {
         return isOperationSuccessful;
     }
 
-    public boolean deleteEmail(EmailSerializable email, String account) {
+    public boolean deleteEmail(Email email, String account) {
         File accountsFile = new File(EMAILS_PATH + "/" + account);
         boolean isOperationSuccessful = false;
 
@@ -296,7 +296,7 @@ public class Database {
             String emailFilePath = EMAILS_PATH + "/" + account + "/" + emailFileName + ".json";
 
             try {
-                ArrayList<EmailSerializable> emails = new ArrayList<>();
+                ArrayList<Email> emails = new ArrayList<>();
                 Reader reader = new FileReader(emailFilePath);
                 Gson g = new GsonBuilder().setPrettyPrinting().create();
 
@@ -305,10 +305,10 @@ public class Database {
 
                 // fill emails array with emails from file
                 for (int i = 0; i < array.size(); i++) {
-                    emails.add(g.fromJson(array.get(i), EmailSerializable.class));
+                    emails.add(g.fromJson(array.get(i), Email.class));
                 }
 
-                for (EmailSerializable e : emails) {
+                for (Email e : emails) {
                     if (e.getId() == email.getId()) {
                         isOperationSuccessful = emails.remove(e);
                         break;
