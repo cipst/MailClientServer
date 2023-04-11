@@ -23,10 +23,8 @@ public class ClientGUI extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
-        System.out.println("Login opened");
 
         primaryStage.setOnCloseRequest(event -> {
-            System.out.println("Login closed");
             System.exit(0);
         });
     }

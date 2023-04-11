@@ -1,6 +1,6 @@
 package com.project.client.controller;
 
-import com.project.client.model.UserModel;
+import com.project.client.model.User;
 import com.project.models.ConnectionRequest;
 import com.project.models.EmailRequest;
 import com.project.models.Email;
@@ -30,6 +30,7 @@ public class ConnectionController {
     private static ObservableList<Email> emailsInboxContent = FXCollections.observableArrayList();
     private static ObjectProperty<Color> serverStatus = new SimpleObjectProperty<>(Color.LAWNGREEN);
     private static BooleanProperty actionsDisabled = new SimpleBooleanProperty(true);
+
     private static Socket socket;
     private static ObjectOutputStream outStream;
     private static ObjectInputStream inStream;
@@ -46,6 +47,24 @@ public class ConnectionController {
 
     static {
         emailsInbox.set(emailsInboxContent);
+    }
+
+    private static void initConnectionObjects() throws IOException {
+        socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT);
+        outStream = new ObjectOutputStream(socket.getOutputStream());
+
+        socket.setSoTimeout(1000);
+        inStream = new ObjectInputStream(socket.getInputStream());
+    }
+
+    private static void closingConnectionObjects(String from) {
+        try {
+            outStream.close();
+            inStream.close();
+            socket.close();
+        } catch (Exception e) {
+            System.out.println(from + e.getMessage());
+        }
     }
 
     /**
@@ -93,19 +112,22 @@ public class ConnectionController {
         }
     }
 
+    /**
+     * It starts the connection to the server
+     * It sends a ConnectionRequest to the server and waits for a Response
+     * If the Response is successful it fills the inbox with the emails received from the server
+     *
+     * @throws Exception
+     */
     public static void startConnection() throws Exception {
 
-        UserModel user = UserController.getUser();
+        User user = UserController.getUser();
 
         try {
-            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT);
-            outStream = new ObjectOutputStream(socket.getOutputStream());
+            initConnectionObjects();
 
-            socket.setSoTimeout(1000);
-            inStream = new ObjectInputStream(socket.getInputStream());
-
-            ConnectionRequest conn = new ConnectionRequest(user.getAddress(), user.getPassword(), ConnectionRequest.Status.CONNECT); // Creo l'oggetto da inviare per richiedere la connessione al server
-            outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
+            ConnectionRequest conn = new ConnectionRequest(user.getAddress(), user.getPassword(), ConnectionRequest.Status.CONNECT);
+            outStream.writeObject(conn);
 
             Object obj = inStream.readObject();
             if (!(obj instanceof Response res)) throw new Exception("Invalid Response");
@@ -121,28 +143,24 @@ public class ConnectionController {
             System.out.println("[startConnection] Connection Error: " + e.getMessage());
             throw new Exception("Connection Error");
         } finally {
-            try {
-                outStream.close();
-                inStream.close();
-                socket.close();
-            } catch (Exception e) {
-                System.out.println("[startConnection] Error on closing: " + e.getMessage());
-            }
+            closingConnectionObjects("[startConnection] Error on closing: ");
         }
     }
 
+    /**
+     * it ends the connection with the server
+     * It sends a ConnectionRequest to the server and waits for a Response
+     *
+     * @throws Exception
+     */
     public static void endConnection() throws Exception {
         if (!isServerOn) throw new Exception("Server is down");
 
         try {
-            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT);
-            outStream = new ObjectOutputStream(socket.getOutputStream());
+            initConnectionObjects();
 
-            socket.setSoTimeout(1000);
-            inStream = new ObjectInputStream(socket.getInputStream());
-
-            ConnectionRequest conn = new ConnectionRequest(UserController.getUser().getAddress(), UserController.getUser().getPassword(), ConnectionRequest.Status.DISCONNECT); // Creo l'oggetto da inviare per richiedere la disconnessione al server
-            outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
+            ConnectionRequest conn = new ConnectionRequest(UserController.getUser().getAddress(), UserController.getUser().getPassword(), ConnectionRequest.Status.DISCONNECT);
+            outStream.writeObject(conn);
 
             Object obj = inStream.readObject();
             if (!(obj instanceof Response res)) throw new Exception("Invalid Response");
@@ -153,30 +171,28 @@ public class ConnectionController {
             System.out.println("[endConnection] Connection Error: " + e.getMessage());
             throw new Exception("Connection Error");
         } finally {
-            try {
-                outStream.close();
-                inStream.close();
-                socket.close();
-            } catch (Exception e) {
-                System.out.println("[endConnection] Error on closing: " + e.getMessage());
-            }
+            closingConnectionObjects("[endConnection] Error on closing: ");
         }
     }
 
+    /**
+     * It sends an EmailRequest to the server to fill the inbox
+     * It waits for a Response from the server
+     * If the Response is successful it fills the inbox with the emails received from the server
+     *
+     * @return true if the inbox has been filled with at least an email, false otherwise
+     * @throws Exception
+     */
     public static boolean fillInbox() throws Exception {
         if (!isServerOn) throw new Exception("Server is down");
 
-        UserModel user = UserController.getUser();
+        User user = UserController.getUser();
 
         try {
-            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT);
-            outStream = new ObjectOutputStream(socket.getOutputStream());
+            initConnectionObjects();
 
-            socket.setSoTimeout(1000);
-            inStream = new ObjectInputStream(socket.getInputStream());
-
-            EmailRequest req = new EmailRequest(user.getAddress(), EmailRequest.RequestType.FILL_INBOX); // Creo l'oggetto da inviare per richiedere la connessione al server
-            outStream.writeObject(req); // Scrivo l'oggetto sullo stream di uscita
+            EmailRequest req = new EmailRequest(user.getAddress(), EmailRequest.RequestType.FILL_INBOX);
+            outStream.writeObject(req);
 
             Object obj = inStream.readObject();
             if (!(obj instanceof Response res)) throw new Exception("Invalid Response");
@@ -195,29 +211,26 @@ public class ConnectionController {
             System.out.println("[fillInbox] Connection Error: " + e.getMessage());
             throw new Exception("Connection Error");
         } finally {
-            try {
-                outStream.close();
-                inStream.close();
-                socket.close();
-            } catch (Exception e) {
-                System.out.println("[fillInbox] Error on closing: " + e.getMessage());
-            }
+            closingConnectionObjects("[fillInbox] Error on closing: ");
         }
     }
 
+    /**
+     * It sends an EmailRequest to the server to delete an email from the inbox
+     * It waits for a Response from the server
+     * If the Response is successful it deletes the email from the inbox
+     * @param email the email to delete
+     * @throws Exception when the server wasn't successful in performing the operation
+     */
     public static void deleteEmail(Email email) throws Exception {
         if (!isServerOn) throw new Exception("Server is down");
 
-        UserModel user = UserController.getUser();
+        User user = UserController.getUser();
         try {
-            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT);
-            outStream = new ObjectOutputStream(socket.getOutputStream());
+            initConnectionObjects();
 
-            socket.setSoTimeout(1000);
-            inStream = new ObjectInputStream(socket.getInputStream());
-
-            EmailRequest conn = new EmailRequest(user.getAddress(), EmailRequest.RequestType.DELETE_FROM_INBOX, email); // Creo l'oggetto da inviare per richiedere la connessione al server
-            outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
+            EmailRequest conn = new EmailRequest(user.getAddress(), EmailRequest.RequestType.DELETE_FROM_INBOX, email);
+            outStream.writeObject(conn);
 
             Object obj = inStream.readObject();
             if (!(obj instanceof Response res)) throw new Exception("Invalid Response");
@@ -230,30 +243,27 @@ public class ConnectionController {
             System.out.println("[deleteEmail] Connection Error: " + e.getMessage());
             throw new Exception("Connection Error");
         } finally {
-            try {
-                outStream.close();
-                inStream.close();
-                socket.close();
-            } catch (Exception e) {
-                System.out.println("[deleteEmail] Error on closing: " + e.getMessage());
-            }
+            closingConnectionObjects("[deleteEmail] Error on closing: ");
         }
     }
 
+    /**
+     * It sends an EmailRequest to the server to send an email
+     * It waits for a Response from the server
+     * If the Response is successful the email was sent correctly
+     * @param email the email to send
+     * @throws Exception when the server wasn't successful in performing the operation
+     */
     public static void sendEmail(Email email) throws Exception {
         if (!isServerOn) throw new Exception("Server is down");
 
-        UserModel user = UserController.getUser();
+        User user = UserController.getUser();
 
         try {
-            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), CONNECTION_PORT);
-            outStream = new ObjectOutputStream(socket.getOutputStream());
+            initConnectionObjects();
 
-            socket.setSoTimeout(1000);
-            inStream = new ObjectInputStream(socket.getInputStream());
-
-            EmailRequest conn = new EmailRequest(user.getAddress(), EmailRequest.RequestType.SEND, email); // Creo l'oggetto da inviare per richiedere la connessione al server
-            outStream.writeObject(conn); // Scrivo l'oggetto sullo stream di uscita
+            EmailRequest conn = new EmailRequest(user.getAddress(), EmailRequest.RequestType.SEND, email);
+            outStream.writeObject(conn);
 
             Object obj = inStream.readObject();
             if (!(obj instanceof Response res)) throw new Exception("Invalid Response");
@@ -265,19 +275,10 @@ public class ConnectionController {
             System.out.println("[sendEmail] Connection Error: " + e.getMessage());
             throw new Exception("Connection Error");
         } finally {
-            try {
-                outStream.close();
-                inStream.close();
-                socket.close();
-            } catch (Exception e) {
-                System.out.println("[sendEmail] Error on closing: " + e.getMessage());
-            }
+            closingConnectionObjects("[sendEmail] Error on closing: ");
         }
     }
 
-    public static boolean isActionsDisabled() {
-        return actionsDisabled.get();
-    }
 
     public static BooleanProperty actionsDisabledProperty() {
         return actionsDisabled;

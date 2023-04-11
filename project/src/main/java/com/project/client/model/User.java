@@ -2,11 +2,11 @@ package com.project.client.model;
 
 import java.util.Objects;
 
-public class UserModel {
+public class User {
     private String address;
     private String password;
 
-    public UserModel(String address, String password) {
+    public User(String address, String password) {
         this.address = address;
         this.password = password;
     }
@@ -17,14 +17,6 @@ public class UserModel {
 
     public String getPassword() {
         return password;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     @Override
@@ -39,9 +31,9 @@ public class UserModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserModel userModel = (UserModel) o;
-        return Objects.equals(address, userModel.address) &&
-                Objects.equals(password, userModel.password);
+        User user = (User) o;
+        return Objects.equals(address, user.address) &&
+                Objects.equals(password, user.password);
     }
 
     @Override

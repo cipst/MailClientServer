@@ -37,10 +37,8 @@ public class NewEmailGUIController {
 
     @FXML
     public void initialize() {
-        System.out.println("NewEmailGUIController initialized");
         lblFrom.setText(UserController.getUser().getAddress());
 
-        System.out.println("Action: " + ClientGUIController.getAction());
         switch (ClientGUIController.getAction()) {
             case REPLY:
                 toField.setEditable(false);
@@ -82,6 +80,12 @@ public class NewEmailGUIController {
         }
     }
 
+    /**
+     * Checks if all addresses are valid in terms of string structure
+     * Regex: there must be a @ and an extension, like .com or .it
+     * @param addresses list of addresses to check
+     * @return an arrayList with invalid addresses if some are invalid, otherwise an empty list
+     */
     private ArrayList<String> checkEmail(String[] addresses) {
         // Regex to check email address
         Pattern pattern = Pattern.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~\\-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~\\-]+)*|\\\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\\\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
@@ -96,6 +100,12 @@ public class NewEmailGUIController {
         return invalidAddresses;
     }
 
+    /**
+     * Checks if address is valid in terms of string structure
+     * Regex: there must be a @ and an extension, like .com or .it
+     * @param address address to check
+     * @return the address if it is invalid, empty string otherwise
+     */
     private String checkEmail(String address) {
         // Regex to check email address
         Pattern pattern = Pattern.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~\\-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~\\-]+)*|\\\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\\\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
@@ -108,6 +118,15 @@ public class NewEmailGUIController {
         return invalidAddresses;
     }
 
+    /**
+     * Checks if there is a recipient in the to field and if the recipients' addresses are correctly divided by a comma
+     * This method calls checkEmail method and returns an alert with all the wrong recipients' addresses
+     * @param to The string that it is going to be checked
+     * @return true if the string is valid, false otherwise
+     *
+     * @see #checkEmail(String[])
+     * @see #checkEmail(String)
+     */
     private boolean isValidToField(String to) {
         if (to.equals("")) {
             new Alert(Alert.AlertType.ERROR, "Missing 'TO' address").showAndWait();
@@ -142,13 +161,11 @@ public class NewEmailGUIController {
 
         if (subjectField.getText().equals("")) {
             new Alert(Alert.AlertType.ERROR, "Missing 'SUBJECT'").showAndWait();
-            System.out.println("Missing 'SUBJECT'");
             return;
         }
 
         if (msgHtml.getHtmlText().equals("<html dir=\"ltr\"><head></head><body contenteditable=\"true\"></body></html>")) {
             new Alert(Alert.AlertType.ERROR, "Missing 'MESSAGE'").showAndWait();
-            System.out.println("Missing 'MESSAGE'");
             return;
         }
 
@@ -160,13 +177,9 @@ public class NewEmailGUIController {
             }
 
             addresses = new ArrayList<>(new HashSet<>(addresses));
-
-
         } else {
             addresses.add(toField.getText());
         }
-
-        System.out.println("Send email");
         try {
             ConnectionController.sendEmail(new Email(lblFrom.getText(), addresses, subjectField.getText(), msgHtml.getHtmlText().replace("contenteditable=\"true\"", "contenteditable=\"false\""),
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));

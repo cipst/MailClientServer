@@ -1,7 +1,7 @@
 package com.project.client.controller;
 
 import com.project.client.ClientGUI;
-import com.project.client.model.UserModel;
+import com.project.client.model.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,11 +20,10 @@ public class LoginGUIController {
     public TextField passwordField;
 
     @FXML
-    private void initialize() {
-        System.out.println("LoginGUIController initialized");
-    }
-
-    @FXML
+    /**
+     * This method is called when the user clicks on the login button.
+     * It will check if the user has filled in all the fields.
+     */
     private void login() {
         try {
             if (emailAddressField.getText().equals("") || passwordField.getText().equals("")) {
@@ -32,7 +31,8 @@ public class LoginGUIController {
                 return;
             }
 
-            UserController.setUser(new UserModel(emailAddressField.getText(), passwordField.getText()));
+            // Set the GLOBAL USER
+            UserController.setUser(new User(emailAddressField.getText(), passwordField.getText()));
 
             ConnectionController.startConnection();
 
@@ -45,23 +45,18 @@ public class LoginGUIController {
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
-            System.out.println("Client GUI opened");
 
             stage.setOnCloseRequest(event -> {
-                System.out.println("Client closed");
                 try {
                     ConnectionController.endConnection();
-                    System.out.println("Connection closed");
                     System.exit(0);
                 } catch (Exception e) {
                     System.out.println("Error closing connection");
-//                    new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
                     System.exit(0);
                 }
             });
         } catch (Exception e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
-            e.printStackTrace();
             System.out.println("Error opening Client GUI");
         }
     }
