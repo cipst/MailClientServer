@@ -43,6 +43,9 @@ public class LogController {
 
     private static void createFile(String fileName) {
         try {
+            File dir = new File(LOGS_PATH);
+            dir.mkdirs();
+
             filePath = LOGS_PATH + "/" + fileName + ".txt";
             File file = new File(filePath);
 
