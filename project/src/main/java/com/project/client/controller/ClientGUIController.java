@@ -20,9 +20,8 @@ import java.util.Optional;
 
 public class ClientGUIController {
 
-    //TODO: delete can be removed
     public enum Actions {
-        NEW_EMAIL, REPLY, REPLY_ALL, FORWARD, DELETE
+        NEW_EMAIL, REPLY, REPLY_ALL, FORWARD
     }
 
     @FXML
@@ -59,7 +58,7 @@ public class ClientGUIController {
         /**
          * PROPERTY BINDING
          */
-        listViewEmails.setItems(ConnectionController.emailsInboxProperty());
+        listViewEmails.setItems(UserController.emailsInboxProperty());
         statusServer.fillProperty().bind(ConnectionController.serverStatusProperty());
 
         /**

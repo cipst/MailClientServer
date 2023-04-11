@@ -6,13 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="5880fde7-3e97-4fe1-a47a-e4533b88f61b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/Database.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/controller/LogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/controller/LogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ServerGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/controller/ServerGUIController.java" afterDir="false" />
-    </list>
-    <list id="373bb978-7312-4fc1-9e15-ea4745f167dc" name="Changes by matte" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/java/com/project/server/controller/LogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/server/controller/LogController.java" afterDir="false" />
     </list>
+    <list id="373bb978-7312-4fc1-9e15-ea4745f167dc" name="Changes by matte" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -55,23 +51,6 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="LineStatusTrackerManager">
-    <file path="$PROJECT_DIR$/src/main/java/com/project/server/controller/LogController.java">
-      <ranges>
-        <range start1="100" end1="102" start2="100" end2="102" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="123" end1="124" start2="123" end2="125" changelist="5880fde7-3e97-4fe1-a47a-e4533b88f61b" />
-        <range start1="141" end1="142" start2="142" end2="143" changelist="373bb978-7312-4fc1-9e15-ea4745f167dc" />
-        <range start1="146" end1="147" start2="147" end2="148" changelist="373bb978-7312-4fc1-9e15-ea4745f167dc" />
-        <range start1="151" end1="152" start2="152" end2="153" changelist="373bb978-7312-4fc1-9e15-ea4745f167dc" />
-        <range start1="156" end1="157" start2="157" end2="158" changelist="373bb978-7312-4fc1-9e15-ea4745f167dc" />
-        <range start1="161" end1="162" start2="162" end2="163" changelist="373bb978-7312-4fc1-9e15-ea4745f167dc" />
-        <range start1="166" end1="167" start2="167" end2="168" changelist="373bb978-7312-4fc1-9e15-ea4745f167dc" />
-        <range start1="171" end1="172" start2="172" end2="173" changelist="373bb978-7312-4fc1-9e15-ea4745f167dc" />
-        <range start1="176" end1="177" start2="177" end2="178" changelist="373bb978-7312-4fc1-9e15-ea4745f167dc" />
-        <range start1="181" end1="182" start2="182" end2="183" changelist="373bb978-7312-4fc1-9e15-ea4745f167dc" />
-      </ranges>
-    </file>
-  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -113,7 +92,7 @@
       <recent name="com.project" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.ServerGUI">
+  <component name="RunManager" selected="Application.ClientGUI">
     <configuration name="ClientGUI" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.project.client.ClientGUI" />
       <module name="project.main" />
@@ -163,7 +142,7 @@
       <workItem from="1679994413699" duration="80000" />
       <workItem from="1680005270614" duration="3897000" />
       <workItem from="1680428297813" duration="1676000" />
-      <workItem from="1681201361201" duration="10803000" />
+      <workItem from="1681201361201" duration="13900000" />
     </task>
     <servers />
   </component>
