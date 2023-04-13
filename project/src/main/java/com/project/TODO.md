@@ -20,3 +20,5 @@
 - [x] Controllo client già loggato
 - [x] Cache delle email da inviare
 - [x] Togliere tutti gli assert
+- [ ] Reply - Reply All --> bloccare il campo subject e inserire "Re:"
+- [ ] Alert prima di chiudere client che avvisa che hai ancora delle mail in cache
