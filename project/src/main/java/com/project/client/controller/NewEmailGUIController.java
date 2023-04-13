@@ -42,20 +42,23 @@ public class NewEmailGUIController {
         switch (ClientGUIController.getAction()) {
             case REPLY:
                 toField.setEditable(false);
-                subjectField.setEditable(true);
+                subjectField.setEditable(false);
                 msgHtml.setDisable(false);
+
+                subjectField.setText("Re: " + ClientGUIController.getSelectedEmail().getSubject());
                 toField.setText(ClientGUIController.getSelectedEmail().getSender());
                 break;
 
             case REPLY_ALL:
                 toField.setEditable(false);
-                subjectField.setEditable(true);
+                subjectField.setEditable(false);
                 msgHtml.setDisable(false);
 
                 ArrayList<String> recipients = new ArrayList<>(ClientGUIController.getSelectedEmail().getRecipients());
                 recipients.removeIf(s -> s.equals(UserController.getUser().getAddress()));
                 recipients.add(ClientGUIController.getSelectedEmail().getSender());
 
+                subjectField.setText("Re: " + ClientGUIController.getSelectedEmail().getSubject());
                 toField.setText(recipients.toString().replace("[", "").replace("]", ""));
                 break;
 
