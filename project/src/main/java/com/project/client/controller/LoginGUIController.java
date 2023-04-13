@@ -7,8 +7,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
+import java.util.Optional;
 
 public class LoginGUIController {
 
@@ -48,8 +51,18 @@ public class LoginGUIController {
 
             stage.setOnCloseRequest(event -> {
                 try {
-                    ConnectionController.endConnection();
-                    System.exit(0);
+                    if (!UserController.getCache().isEmpty()) {
+                        Optional<ButtonType> choice = new Alert(Alert.AlertType.CONFIRMATION, "You have unsent emails. If you close the application you will lose them.\nAre you sure you want to exit?").showAndWait();
+                        if (choice.isPresent() && choice.get() == ButtonType.OK) {
+                            ConnectionController.endConnection();
+                            System.exit(0);
+                        } else {
+                            event.consume();
+                        }
+                    } else {
+                        ConnectionController.endConnection();
+                        System.exit(0);
+                    }
                 } catch (Exception e) {
                     System.out.println("Error closing connection");
                     System.exit(0);
