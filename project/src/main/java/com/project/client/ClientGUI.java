@@ -1,12 +1,15 @@
 package com.project.client;
 
-import com.project.client.controller.ConnectionController;
+import com.project.client.controller.UserController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class ClientGUI extends Application {
 
