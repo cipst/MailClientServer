@@ -190,19 +190,19 @@ public class NewEmailGUIController {
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
 
             new Alert(Alert.AlertType.INFORMATION, "Email sent successfully").showAndWait();
-        } catch (Exception e) {
-            Alert.AlertType alertType;
 
-            if (e.getMessage().contains("The email has been saved"))
-                alertType = Alert.AlertType.WARNING;
-            else
-                alertType = Alert.AlertType.ERROR;
-
-            new Alert(alertType, e.getMessage()).showAndWait();
-        } finally {
             // Close window
             Stage stage = (Stage) btnSend.getScene().getWindow();
             stage.close();
+        } catch (Exception e) {
+            if (e.getMessage().contains("The email has been saved")) {
+                new Alert(Alert.AlertType.WARNING, e.getMessage()).showAndWait();
+                // Close window
+                Stage stage = (Stage) btnSend.getScene().getWindow();
+                stage.close();
+            } else {
+                new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
+            }
         }
     }
 }
