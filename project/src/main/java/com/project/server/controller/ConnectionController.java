@@ -83,10 +83,12 @@ public class ConnectionController {
             lock.notifyAll();
         }
 
-        executor.shutdown();
+        if(executor != null)
+            executor.shutdown();
 
         try {
-            serverSocket.close();
+            if(serverSocket != null)
+                serverSocket.close();
         } catch (IOException e) {
             System.out.println("[stopServer] [serverSocket] Error: " + e.getMessage());
         }
